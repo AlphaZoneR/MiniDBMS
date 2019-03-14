@@ -1,0 +1,22 @@
+{
+  "databases" : [
+    {
+      "name": "Temp",
+      "tables": [
+        {
+          "name": "Allatok",
+          "fields": [
+            {
+              "name": "AID",
+              "type": "int",
+              "isNull": false,
+              "isUnique": true,
+              "isPrimary": true,
+              "isForeign": false
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
