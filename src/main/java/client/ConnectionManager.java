@@ -123,6 +123,7 @@ public class ConnectionManager {
 
     public Table sendGetTable(String database, String name) {
         JSONObject request = new JSONObject();
+        request.put("instruction", "get table");
         request.put("database", database);
         request.put("name", name);
 
@@ -139,6 +140,14 @@ public class ConnectionManager {
         }
 
         return null;
+    }
+
+    public static void sendUseDatabase(String name) {
+        JSONObject request = new JSONObject();
+        request.put("instruction", "use database");
+        request.put("name", name);
+
+        send(request);
     }
 
 }

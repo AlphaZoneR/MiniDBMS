@@ -1,7 +1,10 @@
 package server;
 
+import api.JSONManager;
+import api.RedisManager;
 import org.json.JSONException;
 import org.json.JSONObject;
+import redis.clients.jedis.Jedis;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +30,21 @@ public class Server {
     }
 
     public void run() {
+
+        // Note: make it thread-safe;
+        new Thread(() -> {
+            while (true) {
+                try {
+                    Thread.sleep(10000);
+                    System.out.println("[" + new Date() + "]" + " Performing scheduled backup save!");
+                    JSONManager.manager.save();
+                    RedisManager.manager.save();
+                } catch (InterruptedException interruptedException) {
+                    System.out.println("[" + new Date() + "]" + " " + interruptedException);
+                }
+            }
+        }).start();
+
         while (true) {
             try {
                 Socket s = serverSocket.accept();

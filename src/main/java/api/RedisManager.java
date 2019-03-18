@@ -29,6 +29,7 @@ public class RedisManager {
             this.process = Runtime.getRuntime().exec("redis-server --port 8989 --dir ./data/" + name);
 
             if (this.jedis != null) {
+                this.jedis.save();
                 this.jedis.disconnect();
             }
 
@@ -57,4 +58,10 @@ public class RedisManager {
     }
 
     public void createTable(String name) {}
+
+    public void save() {
+        if (this.jedis != null) {
+            this.jedis.save();
+        }
+    }
 }

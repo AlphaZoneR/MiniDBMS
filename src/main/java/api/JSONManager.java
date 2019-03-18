@@ -17,7 +17,7 @@ public class JSONManager {
 
     public JSONManager() {
         try {
-            File file = new File(Paths.get("").toAbsolutePath().toString() + "\\data\\structure.json");
+            File file = new File(Paths.get("", "data", "structure.json").toAbsolutePath().toString());
             BufferedReader bufferedReader = new BufferedReader(new FileReader(file));
             String fileContents = "", st;
             while ((st = bufferedReader.readLine()) != null) {
@@ -33,7 +33,7 @@ public class JSONManager {
     }
 
     public void save() {
-        File file = new File("data/structure.json");
+        File file = new File(Paths.get("", "data", "structure.json").toAbsolutePath().toString());
 
         try {
             BufferedWriter bufferedWriter = new BufferedWriter(new FileWriter(file));

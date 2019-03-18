@@ -114,7 +114,7 @@ public class HeaderHandler {
             }
 
             JSONManager.manager.addDatabase(object.getString("name"));
-            // RedisManager.manager.addDatabase(object.getString("name"));
+            RedisManager.manager.addDatabase(object.getString("name"));
         });
 
         this.functions.put("drop database", (object) -> {
@@ -123,7 +123,7 @@ public class HeaderHandler {
             }
 
             JSONManager.manager.removeDatabase(object.getString("name"));
-            // Redis.manager.removeDatabase(object.getString("name"));
+            RedisManager.manager.removeDatabase(object.getString("name"));
         });
 
         this.functions.put("use database", (object) -> {
@@ -131,7 +131,7 @@ public class HeaderHandler {
                 throw new RuntimeException("Invalid JSON format!");
             }
 
-            // Redis.manager.useDatabase(object.getString("name"))
+             RedisManager.manager.useDatabase(object.getString("name"));
         });
     }
 
