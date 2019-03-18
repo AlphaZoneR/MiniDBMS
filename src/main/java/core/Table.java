@@ -16,6 +16,11 @@ public class Table {
         this.fields = new ArrayList<>();
     }
 
+    public Table(String name, ArrayList<Field> fields) {
+        this.name = name;
+        this.fields = new ArrayList<>(fields);
+    }
+
     public Table(JSONObject table) {
         this.name = table.getString("name");
         this.fields = new ArrayList<>();
@@ -55,10 +60,10 @@ public class Table {
         JSONObject result = new JSONObject();
         result.put("name", this.name);
 
-        JSONArray fields = new JSONArray(this.fields.size());
+        JSONArray fields = new JSONArray();
 
         for (int i = 0; i < this.fields.size(); ++i) {
-            fields.put(i, this.fields.get(i).toJSON());
+            fields.put(this.fields.get(i).toJSON());
         }
 
         result.put("fields", fields);

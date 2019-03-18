@@ -1,11 +1,15 @@
 package api;
 
+import java.nio.file.Paths;
+
 public class Test {
     public static void main(String[] args) {
-        RedisManager redisManager = new RedisManager();
-        System.out.println(redisManager.createDatabase("temp"));
-        redisManager.selectDatabase("temp");
-
+        JSONManager.manager.addDatabase("Test");
+        JSONManager.manager.addTable("Test", "foo");
+        JSONManager.manager.print();
+        JSONManager.manager.removeTable("Test", "foo");
+        JSONManager.manager.print();
+        JSONManager.manager.removeDatabase("Test");
         JSONManager.manager.print();
     }
 }

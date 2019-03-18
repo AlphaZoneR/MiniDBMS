@@ -4,6 +4,7 @@ import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
 public class RedisManager {
     public static RedisManager manager = new RedisManager();
@@ -13,8 +14,8 @@ public class RedisManager {
     public RedisManager() {
     }
 
-    public boolean selectDatabase(String name) {
-        File file = new File("data/" + name);
+    public boolean useDatabase(String name) {
+        File file = new File(Paths.get("", "data", name).toAbsolutePath().toString());
 
         if (!file.exists()) {
             System.out.println("Error: Cannot select database [" + name + "]. Does not exist!");
@@ -40,12 +41,20 @@ public class RedisManager {
         return true;
     }
 
-    public boolean createDatabase(String name) {
-        File newDatabaseDirectory = new File("./data/"  + name);
+    public boolean addDatabase(String name) {
+        File newDatabaseDirectory = new File(Paths.get("", "data", name).toAbsolutePath().toString());
         return newDatabaseDirectory.mkdir();
     }
 
-    public void createTable(String name) {
+    public boolean removeDatabase(String name) {
+        File toDeleteDirectory = new File(Paths.get("", "data", name).toAbsolutePath().toString());
 
+        if (toDeleteDirectory.exists()) {
+            return toDeleteDirectory.delete();
+        }
+
+        return !toDeleteDirectory.exists();
     }
+
+    public void createTable(String name) {}
 }

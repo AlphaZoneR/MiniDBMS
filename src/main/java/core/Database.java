@@ -38,4 +38,16 @@ public class Database {
 
         return result;
     }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public ArrayList<Table> getTables() {
+        return new ArrayList<>(this.tables);
+    }
+
+    public void addTable(Table table) {
+        this.tables.add(table);
+    }
 }
