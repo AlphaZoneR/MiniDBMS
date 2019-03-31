@@ -5,11 +5,14 @@ import redis.clients.jedis.Jedis;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import core.Entry;
 
 public class RedisManager {
     public static RedisManager manager = new RedisManager();
     private Process process;
     private Jedis jedis;
+    private String currrentDatabase;
+
 
     public RedisManager() {
     }
@@ -33,6 +36,8 @@ public class RedisManager {
                 this.jedis.disconnect();
             }
 
+            this.currrentDatabase = name;
+
             jedis = new Jedis("localhost", 8989);
             jedis.save();
         } catch (IOException e) {
@@ -55,6 +60,12 @@ public class RedisManager {
         }
 
         return !toDeleteDirectory.exists();
+    }
+
+    public void insert(Entry entry) {
+        if (JSONManager.manager.isTable(currrentDatabase, entry.getTable())) {
+
+        }
     }
 
     public void createTable(String name) {}
