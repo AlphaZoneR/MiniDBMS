@@ -1,4 +1,5 @@
 package client;
+import core.Database;
 import core.Table;
 
 public class Test {

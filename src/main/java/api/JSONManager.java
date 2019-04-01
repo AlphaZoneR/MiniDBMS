@@ -45,6 +45,9 @@ public class JSONManager {
     }
 
     public void addDatabase(String name) {
+        if (this.isDatabase(name)) {
+            return;
+        }
         Database database = new Database(name);
         this.structure.getJSONArray("databases").put(database.toJSON());
         this.save();
