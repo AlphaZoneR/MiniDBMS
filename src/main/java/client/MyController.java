@@ -6,6 +6,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
+import javafx.util.Callback;
 
 public class MyController {
 
@@ -29,14 +30,20 @@ public class MyController {
         TreeItem<String> root = new TreeItem<>("Root Node");
         root.setExpanded(true);
         for (Database database : ConnectionManager.sendGetDropdown()) {
-            TreeItem<String> db = new TreeItem<>(database.getName());
+            DatabaseTreeItem db = new DatabaseTreeItem(database.getName());
             for (Table table : database.getTables()) {
-                db.getChildren().add(new TreeItem<>(table.getName()));
+                db.getChildren().add(new TableTreeItem(database.getName(), table.getName()));
             }
             root.getChildren().add(db);
             
         }
         treeView.setRoot(root);
+        treeView.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
+            @Override
+            public TreeCell<String> call(TreeView<String> p) {
+                return new MyTreeCell();
+            }
+        });
     }
 
     public void loadCreateButton() {
@@ -46,6 +53,7 @@ public class MyController {
                 String databaseName = createDbName.getText();
                 ConnectionManager.sendCreateDatabase(databaseName);
                 loadTreeItems();
+                createDbName.setText("");
             }
         });
     }
