@@ -66,6 +66,10 @@ public class Field {
 
     public void setUnique(boolean isUnique) {
         this.isUnique = isUnique;
+
+        if (isUnique) {
+            this.isNullable = false;
+        }
     }
 
     public void setPrimary(boolean isPrimary) {
@@ -73,7 +77,15 @@ public class Field {
     }
 
     public void setIdentity(boolean isIdentity) {
+        if (!this.isPrimary) {
+            return;
+        }
+
         this.isIdentity = isIdentity;
+
+        if (isIdentity) {
+            this.isNullable = false;
+        }
     }
 
     public String getName() {

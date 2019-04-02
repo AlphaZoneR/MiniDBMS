@@ -84,6 +84,10 @@ public class Table {
         return result.get(0);
     }
 
+    public ArrayList<Field> getUniqueFields() {
+        return this.fields.stream().filter(f -> f.getUnique()).collect(Collectors.toCollection(ArrayList::new));
+    }
+
     public boolean hasOnePrimaryField() {
         ArrayList<String> result = this.fields.stream().filter(f -> f.getPrimary()).map(f -> f.getName()).collect(Collectors.toCollection(ArrayList::new));
 

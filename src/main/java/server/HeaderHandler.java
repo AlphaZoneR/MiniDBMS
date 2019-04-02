@@ -1,5 +1,6 @@
 package server;
 
+import api.GeneralManager;
 import api.JSONManager;
 import api.RedisManager;
 import core.Entry;
@@ -138,25 +139,10 @@ public class HeaderHandler {
         this.functions.put("insert one", (object) -> {
             Entry entry = new Entry(object);
 
-            if (JSONManager.manager.isTable(RedisManager.manager.getCurrentDatabase(), entry.getTable())) {
-                Table table = new Table(JSONManager.manager.getTable(RedisManager.manager.getCurrentDatabase(), entry.getTable()));
-
-                if (!table.hasOnePrimaryField()) {
-                    throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because it has none or more than one primary key!");
-                }
-
-                String primaryFieldName = table.getPrimaryFieldName();
-
-                if (!entry.has(primaryFieldName) && !table.isPrimaryKeyIdentity()) {
-                    throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because entry is missing (primary key, value) and primary key is not identity!");
-                }
-
-                if (table.isPrimaryKeyIdentity() && !entry.has(primaryFieldName)) {
-                    // i left off here
-                    int currentRowCount = JSONManager.manager.getRowCount()
-                }
-            } else {
-                throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because table does not exist in the current database!");
+            try {
+                GeneralManager.manager.insert(entry);
+            } catch (RuntimeException e) {
+                e.printStackTrace();
             }
         });
     }

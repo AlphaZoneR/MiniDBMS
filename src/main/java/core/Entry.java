@@ -11,7 +11,7 @@ public class Entry {
     String table;
     HashMap<String, String> values;
 
-    public Entry(String table, String columnName, String value) {
+    public Entry(String table) {
         this.table = table;
         this.values = new HashMap<>();
     }
@@ -85,5 +85,17 @@ public class Entry {
 
     public HashMap<String, String> getAll() {
         return this.values;
+    }
+
+    public String toString() {
+        String result = "<Entry ";
+
+        for (String key: this.values.keySet()) {
+            result += String.format("%s=%s ", key, this.values.get(key));
+        }
+
+        result += ">\n";
+
+        return result;
     }
 }

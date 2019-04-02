@@ -45,6 +45,10 @@ public class JSONManager {
     }
 
     public void addDatabase(String name) {
+        if (name.equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid database name!"));
+        }
+
         if (this.isDatabase(name)) {
             throw new RuntimeException("Cannot create database [" + name + "] because it already exists!");
         }
@@ -74,7 +78,16 @@ public class JSONManager {
         this.save();
     }
 
+    @Deprecated
     public void addTable(String database, String table) {
+        if (database.equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid database name!"));
+        }
+
+        if (table.equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid table name!"));
+        }
+
         if (this.isDatabase(database)) {
             if (!this.isTable(database, table)) {
                 JSONObject databaseObject = this.getDatabase(database);
@@ -92,6 +105,14 @@ public class JSONManager {
     }
 
     public void addTable(String database, Table table) {
+        if (database.equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid database name!"));
+        }
+
+        if (table.getName().equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid table name!"));
+        }
+
         if (!this.isDatabase(database)) {
             throw new RuntimeException(String.format("Cannot create table [%s] because database [%s] does not exist!", table, database));
         } else if (this.isDatabase(database) && !this.isTable(database, table.getName())) {
@@ -103,9 +124,16 @@ public class JSONManager {
         }
     }
 
-    @Deprecated
     public void addTable(String database, String table, ArrayList<Field> fields) {
-        if (this.isDatabase(database) && !this.isTable(database, table)) {
+        if (database.equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid database name!"));
+        }
+
+        if (table.equals("")) {
+            throw new RuntimeException(String.format("'' is not a valid table name!"));
+        }
+
+        if (!this.isTable(database, table)) {
             JSONObject databaseObject = this.getDatabase(database);
             Table tableObject = new Table(table);
 
@@ -114,8 +142,10 @@ public class JSONManager {
             }
 
             databaseObject.getJSONArray("tables").put(tableObject.toJSON());
+            this.save();
+        } else {
+            throw new RuntimeException(String.format("Cannot create table [%s] because it already exists!", table));
         }
-        this.save();
     }
 
     public void removeTable(String database, String table) {
@@ -159,6 +189,14 @@ public class JSONManager {
             int rowCount = jsonTable.getInt("rowCount") + 1;
             jsonTable.put("rowCount", rowCount);
 
+            this.save();
+        }
+    }
+
+    public void nullifyRowCount(String database, String table) {
+        if (this.isDatabase(database) && this.isTable(database, table)) {
+            JSONObject jsonTable = getTable(database, table);
+            jsonTable.put("rowCount", 0);
             this.save();
         }
     }
