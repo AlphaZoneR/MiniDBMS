@@ -9,26 +9,38 @@ import java.util.stream.Collectors;
 public class Table {
     private ArrayList<Field> fields;
     private String name;
+    private int rowCount;
 
 
     public Table(String name) {
         this.name = name;
         this.fields = new ArrayList<>();
+        this.rowCount = 0;
     }
 
     public Table(String name, ArrayList<Field> fields) {
         this.name = name;
         this.fields = new ArrayList<>(fields);
+        this.rowCount = 0;
     }
 
     public Table(JSONObject table) {
+        if (!table.has("name") || !table.has("fields") || !table.has("rowCount")) {
+            throw new RuntimeException("Invalid table format!");
+        }
+
         this.name = table.getString("name");
+        this.rowCount = table.getInt("rowCount");
         this.fields = new ArrayList<>();
+
         JSONArray fields = table.getJSONArray("fields");
+
         for (int i = 0; i < fields.length(); ++i) {
             JSONObject field = fields.getJSONObject(i);
             this.fields.add(new Field(field));
         }
+
+
     }
 
     public String getName() {
@@ -56,6 +68,34 @@ public class Table {
         }
     }
 
+    public String getPrimaryFieldName() {
+        ArrayList<String> result = this.fields.stream().filter(f -> f.getPrimary()).map(f -> f.getName()).collect(Collectors.toCollection(ArrayList::new));
+
+        if (result.size() == 0) {
+            throw new RuntimeException("[" + this.name + "] does not have a primary key!");
+        } else if (result.size() > 1) {
+            throw new RuntimeException("[" + this.name + "] has multiple primary keys!");
+        }
+
+        return result.get(0);
+    }
+
+    public boolean hasOnePrimaryField() {
+        ArrayList<String> result = this.fields.stream().filter(f -> f.getPrimary()).map(f -> f.getName()).collect(Collectors.toCollection(ArrayList::new));
+
+        return result.size() == 1;
+    }
+
+    public boolean isPrimaryKeyIdentity() {
+        if (!hasOnePrimaryField()) {
+            return false;
+        }
+
+        ArrayList<Field> fields = this.fields.stream().filter(f -> f.getPrimary()).collect(Collectors.toCollection(ArrayList::new));
+
+        return fields.get(0).getIdentity();
+    }
+
     public JSONObject toJSON() {
         JSONObject result = new JSONObject();
         result.put("name", this.name);
@@ -67,6 +107,7 @@ public class Table {
         }
 
         result.put("fields", fields);
+        result.put("rowCount", this.rowCount);
 
         return result;
     }

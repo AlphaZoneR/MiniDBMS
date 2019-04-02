@@ -5,7 +5,7 @@ import org.json.JSONObject;
 public class Field {
     private String name;
     private String type;
-    private boolean isUnique, isPrimary, isForeign;
+    private boolean isUnique, isPrimary, isForeign, isIdentity;
 
     public Field(String name, String type) {
         this.name = name;
@@ -13,6 +13,7 @@ public class Field {
         this.isForeign = false;
         this.isPrimary = false;
         this.isUnique = false;
+        this.isIdentity = false;
     }
 
     public Field(JSONObject field) {
@@ -43,6 +44,10 @@ public class Field {
         this.isPrimary = isPrimary;
     }
 
+    public void setIdentity(boolean isIdentity) {
+        this.isIdentity = isIdentity;
+    }
+
     public String getName() {
         return this.name;
     }
@@ -61,6 +66,10 @@ public class Field {
 
     public boolean getForeign() {
         return this.isForeign;
+    }
+
+    public boolean getIdentity() {
+        return this.isIdentity;
     }
 
     public JSONObject toJSON() {

@@ -1,5 +1,6 @@
 package api;
 
+import core.Table;
 import redis.clients.jedis.Jedis;
 
 import java.io.File;
@@ -11,7 +12,7 @@ public class RedisManager {
     public static RedisManager manager = new RedisManager();
     private Process process;
     private Jedis jedis;
-    private String currrentDatabase;
+    private String currentDatabase;
 
 
     public RedisManager() {
@@ -36,7 +37,7 @@ public class RedisManager {
                 this.jedis.disconnect();
             }
 
-            this.currrentDatabase = name;
+            this.currentDatabase = name;
 
             jedis = new Jedis("localhost", 8989);
             jedis.save();
@@ -63,9 +64,13 @@ public class RedisManager {
     }
 
     public void insert(Entry entry) {
-        if (JSONManager.manager.isTable(currrentDatabase, entry.getTable())) {
-
+        String table = entry.getTable();
+        for (String columnName: entry.getKeys()) {
+            jedis.hset(table, columnName, entry.get(columnName));
         }
+
+        this.save();
+
     }
 
     public void createTable(String name) {}
@@ -74,5 +79,9 @@ public class RedisManager {
         if (this.jedis != null) {
             this.jedis.save();
         }
+    }
+
+    public String getCurrentDatabase() {
+        return currentDatabase;
     }
 }

@@ -139,6 +139,13 @@ public class JSONManager {
         return null;
     }
 
+    public void incRowCount(String database, String table) {
+        if (this.isDatabase(database) && this.isTable(database, table)) {
+            JSONObject jsonTable = getTable(database, table);
+        }
+    }
+
+
     public void editTable(String database, String table, ArrayList<Field> fields) {
         if (this.isDatabase(database) && this.isTable(database, table)) {
             removeTable(database, table);

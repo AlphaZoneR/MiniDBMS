@@ -2,6 +2,7 @@ package server;
 
 import api.JSONManager;
 import api.RedisManager;
+import core.Entry;
 import core.Field;
 import core.Table;
 import org.json.JSONArray;
@@ -35,6 +36,7 @@ public class HeaderHandler {
                 if (!fieldObject.has("name") || !fieldObject.has("type")) {
                     throw new RuntimeException("Invalid JSON format!");
                 }
+
 
                 Field field = new Field(fieldObject.getString("name"), fieldObject.getString("type"));
 
@@ -131,6 +133,29 @@ public class HeaderHandler {
             }
 
              RedisManager.manager.useDatabase(object.getString("name"));
+        });
+
+        this.functions.put("insert one", (object) -> {
+            Entry entry = new Entry(object);
+
+            if (JSONManager.manager.isTable(RedisManager.manager.getCurrentDatabase(), entry.getTable())) {
+                Table table = new Table(JSONManager.manager.getTable(RedisManager.manager.getCurrentDatabase(), entry.getTable()));
+
+                if (!table.hasOnePrimaryField()) {
+                    throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because it has none or more than one primary key!");
+                }
+
+                String primaryFieldName = table.getPrimaryFieldName();
+
+                if (!entry.has(primaryFieldName) && !table.isPrimaryKeyIdentity()) {
+                    throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because entry is missing (primary key, value) and primary key is not identity!");
+                }
+
+                if (table.isPrimaryKeyIdentity() && !entry.has(primaryFieldName)) {
+                }
+            } else {
+                throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because table does not exist in the current database!");
+            }
         });
     }
 
