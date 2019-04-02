@@ -152,6 +152,8 @@ public class HeaderHandler {
                 }
 
                 if (table.isPrimaryKeyIdentity() && !entry.has(primaryFieldName)) {
+                    // i left off here
+                    int currentRowCount = JSONManager.manager.getRowCount()
                 }
             } else {
                 throw new RuntimeException("Cannot insert into table [" + entry.getTable() + "] because table does not exist in the current database!");

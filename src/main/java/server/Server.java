@@ -43,7 +43,7 @@ public class Server {
                     System.out.println("[" + new Date() + "]" + " " + interruptedException);
                 }
             }
-        }).start();
+        });
 
         while (true) {
             try {

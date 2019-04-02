@@ -46,7 +46,7 @@ public class JSONManager {
 
     public void addDatabase(String name) {
         if (this.isDatabase(name)) {
-            return;
+            throw new RuntimeException("Cannot create database [" + name + "] because it already exists!");
         }
 
         Database database = new Database(name);
@@ -68,6 +68,8 @@ public class JSONManager {
             if (index != -1) {
                 this.structure.getJSONArray("databases").remove(index);
             }
+        } else {
+            throw new RuntimeException(String.format("Cannot delete database [%s] because it doesn't exist!", name));
         }
         this.save();
     }
@@ -79,19 +81,29 @@ public class JSONManager {
                 Table tableObject = new Table(table);
 
                 databaseObject.getJSONArray("tables").put(tableObject.toJSON());
+            } else {
+                throw new RuntimeException(String.format("Cannot create table [%s] because it already exists!", table));
             }
+        } else {
+            throw new RuntimeException(String.format("Cannot create table [%s] because database [%s] does not exist!", table, database));
         }
+
         this.save();
     }
 
     public void addTable(String database, Table table) {
-        if (this.isDatabase(database) && !this.isTable(database, table.getName())) {
+        if (!this.isDatabase(database)) {
+            throw new RuntimeException(String.format("Cannot create table [%s] because database [%s] does not exist!", table, database));
+        } else if (this.isDatabase(database) && !this.isTable(database, table.getName())) {
             JSONObject databaseObject = this.getDatabase(database);
             databaseObject.getJSONArray("tables").put(table.toJSON());
+            this.save();
+        } else {
+            throw new RuntimeException(String.format("Cannot create table [%s] because it already exists!", table));
         }
-        this.save();
     }
 
+    @Deprecated
     public void addTable(String database, String table, ArrayList<Field> fields) {
         if (this.isDatabase(database) && !this.isTable(database, table)) {
             JSONObject databaseObject = this.getDatabase(database);
@@ -122,6 +134,8 @@ public class JSONManager {
             if (index != -1) {
                 tables.remove(index);
             }
+        } else {
+            throw new RuntimeException(String.format("Cannot drop table [%s] because it does not exist!", table));
         }
         this.save();
     }
@@ -142,6 +156,29 @@ public class JSONManager {
     public void incRowCount(String database, String table) {
         if (this.isDatabase(database) && this.isTable(database, table)) {
             JSONObject jsonTable = getTable(database, table);
+            int rowCount = jsonTable.getInt("rowCount") + 1;
+            jsonTable.put("rowCount", rowCount);
+
+            this.save();
+        }
+    }
+
+    public void decRowCount(String database, String table) {
+        if (this.isDatabase(database) && this.isTable(database, table)) {
+            JSONObject jsonTable = getTable(database, table);
+            int rowCount = jsonTable.getInt("rowCount") - 1;
+            jsonTable.put("rowCount", rowCount);
+
+            this.save();
+        }
+    }
+
+    public int getRowCount(String database, String table) {
+        if (this.isDatabase(database) && this.isTable(database, table)) {
+            JSONObject jsonTable = getTable(database, table);
+            return jsonTable.getInt("rowCount");
+        } else {
+            throw new RuntimeException(String.format("Cannot get rowCount of [%s] because it does not exist!", table));
         }
     }
 
@@ -157,6 +194,8 @@ public class JSONManager {
             }
 
             addTable(database, newTable);
+        } else {
+            throw new RuntimeException(String.format("Cannot alter table [%s] because it does not exist!", table));
         }
         this.save();
     }

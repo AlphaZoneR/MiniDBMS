@@ -1,11 +1,14 @@
 package api;
 
+import core.Field;
 import core.Table;
 import redis.clients.jedis.Jedis;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+
 import core.Entry;
 
 public class RedisManager {
@@ -65,11 +68,36 @@ public class RedisManager {
 
     public void insert(Entry entry) {
         String table = entry.getTable();
-        for (String columnName: entry.getKeys()) {
-            jedis.hset(table, columnName, entry.get(columnName));
+        Table tableObject = new Table(JSONManager.manager.getTable(this.currentDatabase, table));
+        String primaryKeyName = tableObject.getPrimaryFieldName();
+        String entryPrimaryKeyValue = entry.get(primaryKeyName);
+
+        if (this.jedis.hget(table, entryPrimaryKeyValue) != null) {
+            throw new RuntimeException(String.format("Cannot insert into table [%s] entry with primary key [%s] because it already exists!", table, entryPrimaryKeyValue));
         }
 
+        for (Field field: tableObject.getFields()) {
+            if (!field.getNullable() && !entry.has(field.getName())) {
+                throw new RuntimeException(String.format("Cannot insert into table [%s] entry with primary key [%s] because not nullable field [%s] is missing!", table, entryPrimaryKeyValue, field.getName()));
+            }
+        }
+
+        ArrayList<String> entryValues = new ArrayList<>();
+
+        for (Field field: tableObject.getFields()) {
+            if (field.getNullable() && !entry.has(field.getName())) {
+                entryValues.add("null");
+            } else if (entry.has(field.getName())) {
+                entryValues.add(entry.get(field.getName()));
+            }
+        }
+
+        this.jedis.hset(table, entryPrimaryKeyValue, String.join("\00\01\02", entryValues));
         this.save();
+
+    }
+
+    public ArrayList<Entry> selectAll() {
 
     }
 

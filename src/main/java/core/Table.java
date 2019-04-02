@@ -47,9 +47,13 @@ public class Table {
         return this.name;
     }
 
-    public ArrayList<String> getFields() {
+    public ArrayList<String> getFieldNames() {
         ArrayList<String> result = this.fields.stream().map(f -> f.getName()).collect(Collectors.toCollection(ArrayList::new));
         return result;
+    }
+
+    public ArrayList<Field> getFields() {
+        return this.fields;
     }
 
     public void addField(Field field) {
@@ -94,6 +98,10 @@ public class Table {
         ArrayList<Field> fields = this.fields.stream().filter(f -> f.getPrimary()).collect(Collectors.toCollection(ArrayList::new));
 
         return fields.get(0).getIdentity();
+    }
+
+    public ArrayList<String> getNullableFields() {
+        return this.fields.stream().filter(o -> o.getNullable()).map(o -> o.getName()).collect(Collectors.toCollection(ArrayList::new));
     }
 
     public JSONObject toJSON() {

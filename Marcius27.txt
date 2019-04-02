@@ -1,0 +1,10 @@
+Akkor irunk indexallomanyt ha:
+Ha vannak unique mezok -> ekkor mindenikre
+Ha vannak foreign key-ek -> csak akkor lehessen deletelni valamit, ha nincs referencia arra a sorra
+Non unique index file -->
+	- Inverted index -- mostly this is implemented
+	- Make search key unique -- better if rangequery
+
+Inverted index example:
+	If a student is in group 521 -> then the index file key will be 521 and the value will be every students primary
+	key concatenated into a single string/hash. 
