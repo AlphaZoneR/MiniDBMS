@@ -37,6 +37,7 @@ public class Test {
 //
 //        Field field2 = new Field("username", "string");
 //        field2.setNull(true);
+//        field2.setUnique(true);
 //
 //        fields.add(field1);
 //        fields.add(field2);

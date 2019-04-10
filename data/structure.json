@@ -1,1 +1,33 @@
-{"databases":[{"tables":[{"name":"foo","rowCount":3,"fields":[{"isPrimary":true,"isForeign":false,"isNullable":false,"name":"userid","isUnique":true,"isIdentity":true,"type":"int"},{"isPrimary":false,"isForeign":false,"isNullable":false,"name":"username","isUnique":true,"isIdentity":false,"type":"string"}]}],"name":"Test1"}]}
+{
+    "databases": [
+        {
+            "tables": [
+                {
+                    "name": "foo",
+                    "rowCount": 3,
+                    "fields": [
+                        {
+                            "isPrimary": true,
+                            "isForeign": false,
+                            "isNullable": false,
+                            "name": "userid",
+                            "isUnique": true,
+                            "isIdentity": true,
+                            "type": "int"
+                        },
+                        {
+                            "isPrimary": false,
+                            "isForeign": false,
+                            "isNullable": false,
+                            "name": "username",
+                            "isUnique": true,
+                            "isIdentity": false,
+                            "type": "string"
+                        }
+                    ]
+                }
+            ],
+            "name": "Test1"
+        }
+    ]
+}
