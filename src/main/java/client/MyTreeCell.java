@@ -12,7 +12,7 @@ public final class MyTreeCell extends TreeCell<String> {
             setText(null);
             setGraphic(null);
         } else {
-            setText(getItem() == null ? "" : getItem().toString());
+            setText(getItem() == null ? "" : getItem());
             setGraphic(getTreeItem().getGraphic());
             setContextMenu(((AbstractTreeItem) getTreeItem()).getMenu());
         }

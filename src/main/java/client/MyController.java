@@ -2,11 +2,12 @@ package client;
 
 import core.Database;
 import core.Table;
-import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
+import javafx.beans.property.SimpleStringProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
-import javafx.util.Callback;
+import javafx.scene.control.cell.PropertyValueFactory;
 
 public class MyController {
 
@@ -19,13 +20,16 @@ public class MyController {
     @FXML
     private Button createDbButton;
 
+    @FXML
+    private TableView<String> tableView;
+
     public void initialize() {
         loadTreeItems();
 
         loadCreateButton();
     }
 
-    public void loadTreeItems() {
+    void loadTreeItems() {
         treeView.setShowRoot(false);
         TreeItem<String> root = new TreeItem<>("Root Node");
         root.setExpanded(true);
@@ -35,26 +39,18 @@ public class MyController {
                 db.getChildren().add(new TableTreeItem(database.getName(), table.getName()));
             }
             root.getChildren().add(db);
-            
+
         }
         treeView.setRoot(root);
-        treeView.setCellFactory(new Callback<TreeView<String>,TreeCell<String>>(){
-            @Override
-            public TreeCell<String> call(TreeView<String> p) {
-                return new MyTreeCell();
-            }
-        });
+        treeView.setCellFactory(p -> new MyTreeCell());
     }
 
-    public void loadCreateButton() {
-        createDbButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+    private void loadCreateButton() {
+        createDbButton.setOnAction(event -> {
                 String databaseName = createDbName.getText();
                 ConnectionManager.sendCreateDatabase(databaseName);
                 loadTreeItems();
                 createDbName.setText("");
-            }
         });
     }
 

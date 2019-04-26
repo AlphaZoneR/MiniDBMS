@@ -9,7 +9,7 @@ public class DatabaseTreeItem extends AbstractTreeItem{
 
     private String database;
 
-    public DatabaseTreeItem(String database) {
+    DatabaseTreeItem(String database) {
         this.database = database;
         this.setValue(database);
     }
@@ -17,13 +17,11 @@ public class DatabaseTreeItem extends AbstractTreeItem{
     @Override
     public ContextMenu getMenu(){
         MenuItem delete = new MenuItem("DELETE DATABASE");
-        delete.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent event) {
+        delete.setOnAction(event -> {
                 ConnectionManager.sendUseDatabase(database);
                 ConnectionManager.sendDropDatabase(database);
                 Client.controller.loadTreeItems();
-            }
+
         });
         return new ContextMenu(delete);
     }
