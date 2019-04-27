@@ -70,10 +70,17 @@
           "fields": [
             {
               "isPrimary": true,
-              "isForeign": false,
-              "name": "a",
+              "isForeign": true,
+              "name": "ID",
               "isUnique": true,
-              "type": "b"
+              "type": "string"
+            },
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "id2",
+              "isUnique": true,
+              "type": "int"
             }
           ]
         },
@@ -88,9 +95,81 @@
               "type": "b"
             }
           ]
+        },
+        {
+          "name": "hi4",
+          "fields": [
+            {
+              "isPrimary": false,
+              "isForeign": true,
+              "name": "a",
+              "isUnique": false,
+              "type": "d"
+            }
+          ]
         }
       ],
       "name": "hola"
+    },
+    {
+      "tables": [
+        {
+          "name": "table1",
+          "fields": [
+            {
+              "isPrimary": false,
+              "isForeign": false,
+              "name": "field1",
+              "isUnique": false,
+              "type": "int"
+            }
+          ]
+        }
+      ],
+      "name": "test1"
+    },
+    {
+      "tables": [
+        {
+          "name": "The Darks Side of The Moon",
+          "fields": [
+            {
+              "isPrimary": true,
+              "isForeign": true,
+              "name": "Wish You Were Here",
+              "isUnique": true,
+              "type": "int"
+            },
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "Money",
+              "isUnique": true,
+              "type": "String"
+            }
+          ]
+        },
+        {
+          "name": "The Wall",
+          "fields": [
+            {
+              "isPrimary": false,
+              "isForeign": true,
+              "name": "In The Flesh?",
+              "isUnique": false,
+              "type": "a"
+            },
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "Comfortably Numb",
+              "isUnique": true,
+              "type": "b"
+            }
+          ]
+        }
+      ],
+      "name": "Pink Floyd"
     }
   ]
 }

@@ -120,7 +120,7 @@ public class ConnectionManager {
         return null;
     }
 
-    public Table sendGetTable(String database, String name) {
+    public static Table sendGetTable(String database, String name) {
         JSONObject request = new JSONObject();
         request.put("instruction", "get table");
         request.put("database", database);

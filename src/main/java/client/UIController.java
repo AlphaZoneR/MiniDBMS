@@ -4,6 +4,7 @@ import core.Database;
 import core.Table;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.layout.Pane;
 
@@ -28,7 +29,7 @@ public class UIController {
 
         loadCreateButton();
 
-//        loadListener();
+        loadListener();
     }
 
     void loadTreeItems() {
@@ -37,6 +38,7 @@ public class UIController {
         root.setExpanded(true);
         for (Database database : ConnectionManager.sendGetDropdown()) {
             DatabaseTreeItem db = new DatabaseTreeItem(database.getName());
+
             for (Table table : database.getTables()) {
                 db.getChildren().add(new TableTreeItem(database.getName(), table.getName()));
             }
@@ -58,15 +60,14 @@ public class UIController {
     private void loadListener() {
         treeView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
-                boolean isDatabase = false;
                 TreeItem<String> item = treeView.getSelectionModel().getSelectedItem();
-                for (Database database : ConnectionManager.sendGetDropdown()) {
-                    if (database.getName().equals(item.getValue()))
-                        isDatabase = true;
-                }
-                if (isDatabase) {
-                    ConnectionManager.sendUseDatabase(item.getValue());
-                    return;
+                if (item.isLeaf()) {
+                    loadTableView(item.getParent().getValue(), item.getValue());
+                } else {
+                    if (!item.isExpanded()) {
+                        loadCreateTable(item.getValue());
+                        item.setExpanded(true);
+                    }
                 }
             }
         });
@@ -80,11 +81,34 @@ public class UIController {
             CreateTableController controller = fxmlLoader.getController();
             controller.setDatabase(database);
 
+            clearPane();
             dynamicPane.getChildren().add(pane);
 
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    public void loadTableView(String database, String table) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(UIController.class.getResource("/TableView.fxml"));
+            Pane pane = fxmlLoader.load();
+
+            TableViewController controller = fxmlLoader.getController();
+            controller.setDatabase(database);
+            controller.setTable(table);
+            controller.loadTableView();
+
+            clearPane();
+            dynamicPane.getChildren().add(pane);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void clearPane() {
+        dynamicPane.getChildren().clear();
     }
 
 }

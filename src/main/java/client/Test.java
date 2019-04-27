@@ -14,5 +14,6 @@ public class Test {
             fields.add(field);
             Table table = new Table("table1", fields);
             ConnectionManager.sendCreateTable("test1", table);
+            ConnectionManager.sendGetTable("test1", "table1").getFields().forEach(System.out::println);
         }
 }

@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 public class Client extends Application {
@@ -22,6 +23,7 @@ public class Client extends Application {
         firstStage.setTitle("Feri && Boti DBMS");
         firstStage.setScene(scene);
         firstStage.setResizable(false);
+        firstStage.getIcons().add(new Image(getClass().getResourceAsStream("/icon.png")));
         firstStage.show();
 
     }

@@ -95,6 +95,11 @@
                                 <Insets/>
                             </FlowPane.margin>
                         </Button>
+                        <Button fx:id="cancelTable" mnemonicParsing="false" text="CANCEL">
+                            <FlowPane.margin>
+                                <Insets left="10.0"/>
+                            </FlowPane.margin>
+                        </Button>
                     </children>
                 </FlowPane>
             </children>

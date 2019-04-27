@@ -38,6 +38,9 @@ public class CreateTableController {
     @FXML
     private Button createTable;
 
+    @FXML
+    private Button cancelTable;
+
     private ArrayList<Field> fields;
 
     private String database;
@@ -50,6 +53,8 @@ public class CreateTableController {
         loadAddField();
 
         loadCreateTable();
+
+        loadCancelTable();
     }
 
     private void initializeColumnFactory() {
@@ -120,12 +125,16 @@ public class CreateTableController {
             Table table = new Table(name, fields);
             ConnectionManager.sendCreateTable(database, table);
             Client.controller.loadTreeItems();
+            Client.controller.clearPane();
         });
+    }
+
+    private void loadCancelTable() {
+        cancelTable.setOnAction(event -> Client.controller.clearPane());
     }
 
     public void setDatabase(String database) {
         this.database = database;
     }
-
 
 }

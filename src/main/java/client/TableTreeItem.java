@@ -24,6 +24,8 @@ public class TableTreeItem extends AbstractTreeItem{
                 Client.controller.loadTreeItems();
 
         });
-        return new ContextMenu(delete);
+        MenuItem view = new MenuItem("VIEW");
+        view.setOnAction(event -> Client.controller.loadTableView(database, table));
+        return new ContextMenu(delete, view);
     }
 }
