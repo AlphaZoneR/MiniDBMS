@@ -8,7 +8,7 @@ import javafx.stage.Stage;
 
 public class Client extends Application {
 
-    public static MyController controller;
+    static UIController controller;
 
     @Override
     public void start(Stage firstStage) throws Exception {

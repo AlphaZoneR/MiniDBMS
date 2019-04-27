@@ -1,1 +1,96 @@
-{"databases":[{"tables":[{"name":"Allatok","fields":[{"isPrimary":true,"isForeign":false,"isNull":false,"name":"AID","isUnique":true,"type":"int"}]}],"name":"Temp"},{"tables":[{"name":"foo","fields":[{"isPrimary":true,"isForeign":false,"name":"fooid","isUnique":true,"type":"string"}]}],"name":"temporary"},{"tables":[{"name":"animals","fields":[]}],"name":"mytemp"},{"tables":[],"name":"hola"},{"tables":[],"name":"beigli"},{"tables":[],"name":"lovasz"},{"tables":[],"name":"Feri"},{"tables":[],"name":"a"}]}
+{
+  "databases": [
+    {
+      "tables": [
+        {
+          "name": "Allatok",
+          "fields": [
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "isNull": false,
+              "name": "AID",
+              "isUnique": true,
+              "type": "int"
+            }
+          ]
+        }
+      ],
+      "name": "Temp"
+    },
+    {
+      "tables": [
+        {
+          "name": "foo",
+          "fields": [
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "fooid",
+              "isUnique": true,
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "name": "temporary"
+    },
+    {
+      "tables": [
+        {
+          "name": "animals",
+          "fields": []
+        }
+      ],
+      "name": "mytemp"
+    },
+    {
+      "tables": [
+        {
+          "name": "hi",
+          "fields": [
+            {
+              "isPrimary": true,
+              "isForeign": true,
+              "name": "field1",
+              "isUnique": true,
+              "type": "string"
+            },
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "field2",
+              "isUnique": true,
+              "type": "int"
+            }
+          ]
+        },
+        {
+          "name": "hi2",
+          "fields": [
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "a",
+              "isUnique": true,
+              "type": "b"
+            }
+          ]
+        },
+        {
+          "name": "hi3",
+          "fields": [
+            {
+              "isPrimary": false,
+              "isForeign": true,
+              "name": "a",
+              "isUnique": false,
+              "type": "b"
+            }
+          ]
+        }
+      ],
+      "name": "hola"
+    }
+  ]
+}
