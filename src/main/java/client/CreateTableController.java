@@ -46,6 +46,9 @@ public class CreateTableController {
     private String database;
 
     public void initialize() {
+
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
+
         fields = new ArrayList<>();
 
         initializeColumnFactory();

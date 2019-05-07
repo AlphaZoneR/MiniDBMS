@@ -170,6 +170,42 @@
         }
       ],
       "name": "Pink Floyd"
+    },
+    {
+      "tables": [
+        {
+          "name": "xaba",
+          "fields": [
+            {
+              "isPrimary": true,
+              "isForeign": false,
+              "name": "ID",
+              "isUnique": true,
+              "type": "int"
+            },
+            {
+              "isPrimary": false,
+              "isForeign": false,
+              "name": "name",
+              "isUnique": true,
+              "type": "string"
+            }
+          ]
+        },
+        {
+          "name": "Norbert",
+          "fields": [
+            {
+              "isPrimary": false,
+              "isForeign": true,
+              "name": "a",
+              "isUnique": false,
+              "type": "string"
+            }
+          ]
+        }
+      ],
+      "name": "Csaba"
     }
   ]
 }

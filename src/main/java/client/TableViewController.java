@@ -19,6 +19,7 @@ public class TableViewController {
     private String table;
 
     public void initialize() {
+        tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
         //;
     }
 
