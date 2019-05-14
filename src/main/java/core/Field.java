@@ -3,14 +3,24 @@ package core;
 import org.json.JSONObject;
 
 public class Field {
-    private String name;
-    private String type;
-    private boolean isUnique, isPrimary, isForeign, isIdentity, isNullable;
+    private String name, ref;
+    private int type;
+    private boolean isUnique, isPrimary, isIdentity, isNullable;
 
-    public Field(String name, String type) {
+    public Field(String name, int type) {
         this.name = name;
         this.type = type;
-        this.isForeign = false;
+        this.ref = "";
+        this.isPrimary = false;
+        this.isUnique = false;
+        this.isIdentity = false;
+        this.isNullable = false;
+    }
+
+    public Field(String name, String ref) {
+        this.name = name;
+        this.type = 3;
+        this.ref = ref;
         this.isPrimary = false;
         this.isUnique = false;
         this.isIdentity = false;
@@ -18,37 +28,35 @@ public class Field {
     }
 
     public Field(JSONObject field) {
-        if (!field.has("name") || !field.has("type")) {
+        if (!field.has("type")) {
             throw new RuntimeException("Invalid Field format!");
         }
 
-        this.name = field.getString("name");
-        this.type = field.getString("type");
+        this.type = field.getInt("type");
 
-        this.isForeign = false;
         this.isIdentity = false;
         this.isPrimary = false;
         this.isNullable = false;
         this.isUnique = false;
 
-        if (field.has("isForeign")) {
-            this.isForeign = field.getBoolean("isForeign");
+        if (field.has("primary")) {
+            this.isPrimary = field.getBoolean("primary");
         }
 
-        if (field.has("isPrimary")) {
-            this.isPrimary = field.getBoolean("isPrimary");
+        if (field.has("unique")) {
+            this.isUnique = field.getBoolean("unique");
         }
 
-        if (field.has("isUnique")) {
-            this.isUnique = field.getBoolean("isUnique");
+        if (field.has("null")) {
+            this.isNullable = field.getBoolean("null");
         }
 
-        if (field.has("isNullable")) {
-            this.isNullable = field.getBoolean("isNullable");
+        if (field.has("identity")) {
+            this.isIdentity = field.getBoolean("identity");
         }
 
-        if (field.has("isIdentity")) {
-            this.isIdentity = field.getBoolean("isIdentity");
+        if (field.has("ref")) {
+            this.ref = field.getString("ref");
         }
     }
 
@@ -56,12 +64,12 @@ public class Field {
         this.name = name;
     }
 
-    public void setType(String type) {
+    public void setType(int type) {
         this.type = type;
     }
 
-    public void setForeign(boolean isForeign) {
-        this.isForeign = isForeign;
+    public void setRef(String ref) {
+        this.ref = ref;
     }
 
     public void setUnique(boolean isUnique) {
@@ -92,7 +100,7 @@ public class Field {
         return this.name;
     }
 
-    public String getType() {
+    public int getType() {
         return this.type;
     }
 
@@ -104,8 +112,8 @@ public class Field {
         return this.isPrimary;
     }
 
-    public boolean getForeign() {
-        return this.isForeign;
+    public String getRef() {
+        return this.ref;
     }
 
     public boolean getIdentity() {
@@ -122,13 +130,12 @@ public class Field {
 
     public JSONObject toJSON() {
         JSONObject result = new JSONObject();
-        result.put("name", this.name);
         result.put("type", this.type);
-        result.put("isUnique", this.isUnique);
-        result.put("isPrimary", this.isPrimary);
-        result.put("isForeign", this.isForeign);
-        result.put("isIdentity", this.isIdentity);
-        result.put("isNullable", this.isNullable);
+        result.put("unique", this.isUnique);
+        result.put("primary", this.isPrimary);
+        result.put("ref", this.ref);
+        result.put("identity", this.isIdentity);
+        result.put("null", this.isNullable);
 
         return result;
     }

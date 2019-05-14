@@ -17,43 +17,18 @@ public class Entry {
     }
 
     public Entry(JSONObject entry) {
-        if (!entry.has("table") || !entry.has("values")) {
-            throw new RuntimeException("Invalid Entry format!");
-        }
-
-        this.table = entry.getString("table");
         this.values = new HashMap<>();
-
-        JSONArray jsonValues = entry.getJSONArray("values");
-
-        for (int i = 0; i < jsonValues.length(); ++i) {
-            JSONObject fieldEntry = jsonValues.getJSONObject(i);
-
-            if (!fieldEntry.has("column") || !fieldEntry.has("value")) {
-                throw new RuntimeException("Invalid Entry format!");
-            }
-
-            this.values.put(entry.getString("column"), entry.getString("value"));
+        for (String key: entry.keySet()) {
+            this.values.put(key, entry.get(key).toString());
         }
     }
 
-    JSONObject toJSON() {
+    public JSONObject toJSON() {
         JSONObject result = new JSONObject();
-        result.put("table", table);
-
-        JSONArray jsonValues = new JSONArray();
 
         for (String key: this.values.keySet()) {
-            JSONObject fieldEntry = new JSONObject();
-
-            fieldEntry.put("column", key);
-            fieldEntry.put("value", this.values.get(key));
-
-            jsonValues.put(fieldEntry);
+            result.put(key, this.values.get(key));
         }
-
-        result.put("values", jsonValues);
-
         return result;
     }
 
@@ -82,6 +57,7 @@ public class Entry {
     public String getTable() {
         return this.table;
     }
+    public void setTable(String name) { this.table = name; }
 
     public HashMap<String, String> getAll() {
         return this.values;

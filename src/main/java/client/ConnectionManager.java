@@ -1,153 +1,226 @@
 package client;
 
 import core.Database;
+import core.Entry;
 import core.Table;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.xml.crypto.Data;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import java.io.*;
+import java.net.*;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 
 public class ConnectionManager {
-    private static String send(JSONObject object) {
-        try {
-            Socket socket = new Socket("localhost", 8990);
-            PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-            BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-            out.write(object.toString());
-            out.flush();
+    private static String readFromInputStream(InputStream is) {
+        StringBuilder stringBuilder = new StringBuilder();
 
-            char[] response = new char[2048];
+        try (Reader reader = new BufferedReader(new InputStreamReader(is, Charset.forName("UTF-8")))) {
+            int c = 0;
 
-            int read = in.read(response);
-
-            in.close();
-            out.close();
-            socket.close();
-
-            return String.valueOf(response);
+            while ((c = reader.read()) != -1) {
+                stringBuilder.append((char) c);
+            }
         } catch (IOException e) {
+            e.printStackTrace();
+            return "";
+        }
+
+        return stringBuilder.toString();
+    }
+
+    private static String send(String url, String method) {
+        try {
+            URL mUrl = new URL(url);
+            URLConnection urlConnection = mUrl.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+
+            httpURLConnection.setRequestMethod(method);
+            httpURLConnection.setDoOutput(true);
+
+            httpURLConnection.connect();
+
+            if (httpURLConnection.getResponseCode() == 200) {
+                return readFromInputStream(httpURLConnection.getInputStream());
+            }
+
+            return readFromInputStream(httpURLConnection.getErrorStream());
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return e.toString();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return e1.toString();
+        }
+    }
+
+    private static String sendWithBody(String url, String method, JSONObject body) {
+        try {
+            URL mUrl = new URL(url);
+            URLConnection urlConnection = mUrl.openConnection();
+            HttpURLConnection httpURLConnection = (HttpURLConnection) urlConnection;
+
+            httpURLConnection.setRequestMethod(method);
+            urlConnection.setRequestProperty("Content-Type", "application/json");
+            httpURLConnection.setDoOutput(true);
+
+            httpURLConnection.connect();
+
+            try (OutputStream os = httpURLConnection.getOutputStream()) {
+                byte[] input = body.toString().getBytes("UTF-8");
+                os.write(input, 0, input.length);
+            }
+
+            if (httpURLConnection.getResponseCode() == 200) {
+                return readFromInputStream(httpURLConnection.getInputStream());
+            }
+
+            return readFromInputStream(httpURLConnection.getErrorStream());
+
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            return e.toString();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+            return e1.toString();
+        }
+    }
+
+
+    public static String sendCreateDatabase(String name) {
+        return send("http://localhost:5000/database/" + name, "POST");
+    }
+
+
+    public static String sendDropDatabase(String name) {
+        return send("http://localhost:5000/database/" + name, "DELETE");
+    }
+
+    public static String sendUseDatabase(String name) {
+        return send("http://localhost:5000/database/use/" + name, "GET");
+    }
+
+    public static String sendCreateTable(Table table) {
+        return sendWithBody("http://localhost:5000/tmanage/" + table.getName(), "POST", table.toJSON());
+    }
+
+    public static String sendDropTable(String name) {
+        return send("http://localhost:5000/tmanage/" + name, "DELETE");
+    }
+
+    public static ArrayList<Database> sendGetDropdown() {
+        String databasesString  = send("http://localhost:5000/database", "GET");
+
+        try {
+            JSONObject databases = new JSONObject((databasesString));
+            ArrayList<Database> result = new ArrayList<>();
+
+            for (String databaseKey: databases.keySet()) {
+                Database database = new Database(databaseKey);
+
+                for (String tableKey: databases.getJSONObject(databaseKey).keySet()) {
+                    Table table = new Table(databases.getJSONObject(databaseKey).getJSONObject(tableKey));
+                    database.addTable(table);
+                }
+
+                result.add(database);
+            }
+
+            return result;
+        } catch (JSONException e) {
             e.printStackTrace();
         }
 
         return null;
     }
 
-    public static void sendCreateDatabase(String name) {
-        JSONObject result = new JSONObject();
-        result.put("instruction", "create database");
-        result.put("name", name);
+    public static Table sendGetTable(String name) {
+        String result = send("http://localhost:5000/tmanage/" + name, "GET");
+        try {
+            JSONObject table = new JSONObject(result);
+            Table tObject = new Table(table);
+            tObject.setName(name);
 
-        send(result);
-    }
-
-    public static void sendCreateDatabase(Database database) {
-        JSONObject result = new JSONObject();
-        sendCreateDatabase(database.getName());
-
-        for (Table table: database.getTables()) {
-            sendCreateTable(database.getName(), table);
+            return tObject;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
     }
 
-    public static void sendDropDatabase(String name) {
-        JSONObject result = new JSONObject();
-        result.put("instruction", "drop database");
-        result.put("name", name);
-
-        send(result);
-    }
-
-    public static void sendCreateTable(String database, Table table) {
-        JSONObject result = table.toJSON();
-        result.put("database", database);
-        result.put("instruction", "create table");
-
-        send(result);
-    }
-
-    public static void sendDropTable(String database, String table) {
-        JSONObject result = new JSONObject();
-        result.put("name", table);
-        result.put("database", database);
-        result.put("instruction", "drop table");
-
-        send(result);
-    }
-
-    public static void sendDropTable(String database, Table table) {
-        JSONObject result = new JSONObject();
-        result.put("name", table.getName());
-        result.put("database", database);
-        result.put("instruction", "drop table");
-
-        send(result);
-    }
-
-    public static ArrayList<Database> sendGetDropdown() {
-        JSONObject request = new JSONObject();
-        request.put("instruction", "get dropdown");
-
+    public static ArrayList<Entry> sendSelectAll(String name) {
+        String result = send("http://localhost:5000/table/" + name, "GET");
+        ArrayList<Entry> entries = new ArrayList<>();
         try {
-            String response = send(request);
-            ArrayList<Database> result = new ArrayList<>();
-            if (response != null) {
-                JSONObject data = new JSONObject(response);
-                JSONArray databases = data.getJSONArray("databases");
-                for (int i = 0; i < databases.length(); ++i) {
-                    Database database = new Database(databases.getJSONObject(i).getString("name"));
+            JSONArray array = new JSONArray(result);
 
-                    JSONArray tables = databases.getJSONObject(i).getJSONArray("tables");
-
-                    for (int j = 0; j < tables.length(); ++j) {
-                        Table table = new Table(tables.getString(j));
-                        database.addTable(table);
-                    }
-                    result.add(database);
-                }
-
-                return result;
-            }
-        } catch (JSONException jsonException) {
-            jsonException.printStackTrace();
-        }
-
-        return null;
-    }
-
-    public Table sendGetTable(String database, String name) {
-        JSONObject request = new JSONObject();
-        request.put("instruction", "get table");
-        request.put("database", database);
-        request.put("name", name);
-
-        try {
-            String resultString = send(request);
-
-            if (resultString != null) {
-                JSONObject object = new JSONObject(resultString);
-                return new Table(object);
+            for (int i = 0; i < array.length(); ++i) {
+                Entry entry = new Entry(array.getJSONObject(i));
+                entry.setTable(name);
+                entries.add(entry);
             }
 
-        } catch (JSONException jsonException) {
-            jsonException.printStackTrace();
+            return entries;
+        } catch (JSONException e) {
+            return new ArrayList<>();
         }
-
-        return null;
     }
 
-    public static void sendUseDatabase(String name) {
-        JSONObject request = new JSONObject();
-        request.put("instruction", "use database");
-        request.put("name", name);
+    public static Entry sendSelectByPrimary(String name, String primary) {
+        String result = send("http://localhost:5000/table/" + name + "/" + primary, "GET");
+        try {
+            JSONObject jsonEntry = new JSONObject(result);
+            Entry entry = new Entry(jsonEntry);
+            entry.setTable(name);
 
-        send(request);
+            return entry;
+        } catch (JSONException e) {
+            return null;
+        }
     }
+
+    public static ArrayList<Entry> sendSelectByFilter(String name, JSONObject filter) {
+        String result = sendWithBody("http://localhost:5000/table/" + name, "GET", filter);
+
+        ArrayList<Entry> entries = new ArrayList<>();
+        try {
+            JSONArray array = new JSONArray(result);
+
+            for (int i = 0; i < array.length(); ++i) {
+                Entry entry = new Entry(array.getJSONObject(i));
+                entry.setTable(name);
+                entries.add(entry);
+            }
+
+            return entries;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
+    public static String sendInsert(String name, Entry entry) {
+        return sendWithBody("http://localhost:5000/table/" + name, "POST", entry.toJSON());
+    }
+
+    public static String sendInsert(String name, String primary, Entry entry) {
+        return sendWithBody("http://localhost:5000/table/" + name + "/" + primary, "POST", entry.toJSON());
+    }
+
+    public static String sendDeleteAll(String name) {
+        return sendWithBody("http://localhost:5000/table/" + name, "DELETE", new JSONObject());
+    }
+
+    public static String sendDeleteByPrimary(String name, String primary) {
+        return send("http://localhost:5000/table/" + name + "/" + primary, "DELETE");
+    }
+
+    public static String sendDeleteByFilter(String name, JSONObject filter) {
+        return sendWithBody("http://localhost:5000/table/" + name, "DELETE", filter);
+    }
+
+
 
 }

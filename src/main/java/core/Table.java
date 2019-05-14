@@ -25,26 +25,21 @@ public class Table {
     }
 
     public Table(JSONObject table) {
-        if (!table.has("name") || !table.has("fields") || !table.has("rowCount")) {
-            throw new RuntimeException("Invalid table format!");
-        }
-
-        this.name = table.getString("name");
-        this.rowCount = table.getInt("rowCount");
         this.fields = new ArrayList<>();
 
-        JSONArray fields = table.getJSONArray("fields");
-
-        for (int i = 0; i < fields.length(); ++i) {
-            JSONObject field = fields.getJSONObject(i);
-            this.fields.add(new Field(field));
+        for (String key: table.keySet()) {
+            Field field = new Field(table.getJSONObject(key));
+            field.setName((key));
+            this.fields.add(field);
         }
-
-
     }
 
     public String getName() {
         return this.name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public ArrayList<String> getFieldNames() {
@@ -110,16 +105,10 @@ public class Table {
 
     public JSONObject toJSON() {
         JSONObject result = new JSONObject();
-        result.put("name", this.name);
 
-        JSONArray fields = new JSONArray();
-
-        for (int i = 0; i < this.fields.size(); ++i) {
-            fields.put(this.fields.get(i).toJSON());
+        for (Field field: this.fields) {
+            result.put(field.getName(), field.toJSON());
         }
-
-        result.put("fields", fields);
-        result.put("rowCount", this.rowCount);
 
         return result;
     }
