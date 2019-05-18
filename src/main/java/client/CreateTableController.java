@@ -68,14 +68,14 @@ public class CreateTableController {
         type.setCellValueFactory(new PropertyValueFactory<>("type"));
 
         TableColumn<Field, Boolean> isForeign = new TableColumn<>("Is Foreign");
-        isForeign.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getForeign()));
-        isForeign.setCellFactory(col -> new TableCell<Field, Boolean>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : item ? "True" : "False");
-            }
-        });
+//        isForeign.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getForeign()));
+//        isForeign.setCellFactory(col -> new TableCell<Field, Boolean>() {
+//            @Override
+//            protected void updateItem(Boolean item, boolean empty) {
+//                super.updateItem(item, empty);
+//                setText(empty ? null : item ? "True" : "False");
+//            }
+//        });
 
         TableColumn<Field, Boolean> isPrimary = new TableColumn<>("Is Primary");
         isPrimary.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getPrimary()));
@@ -107,7 +107,7 @@ public class CreateTableController {
             String name = fieldName.getText();
             String type = fieldType.getText();
             Field field = new Field(name, type);
-            field.setForeign(fieldForeign.isSelected());
+//            field.setForeign(fieldForeign.isSelected());
             field.setPrimary(fieldPrimary.isSelected());
             field.setUnique(fieldUnique.isSelected());
             tableView.getItems().add(field);
@@ -126,7 +126,7 @@ public class CreateTableController {
         createTable.setOnAction(event -> {
             String name = tableName.getText();
             Table table = new Table(name, fields);
-            ConnectionManager.sendCreateTable(database, table);
+//            ConnectionManager.sendCreateTable(database, table);
             Client.controller.loadTreeItems();
             Client.controller.clearPane();
         });

@@ -24,16 +24,16 @@ public class TableViewController {
     }
 
     public void loadTableView() {
-        Table t = ConnectionManager.sendGetTable(database, table);
-        for (String name : t.getFields()) {
-            TableColumn column = new TableColumn(name);
-            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
-                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
-                    return new SimpleStringProperty(name);
-                }
-            });
-            tableView.getColumns().add(column);
-        }
+//        Table t = ConnectionManager.sendGetTable(database, table);
+//        for (String name : t.getFields()) {
+//            TableColumn column = new TableColumn(name);
+//            column.setCellValueFactory(new Callback<TableColumn.CellDataFeatures<ObservableList, String>, ObservableValue<String>>() {
+//                public ObservableValue<String> call(TableColumn.CellDataFeatures<ObservableList, String> param) {
+//                    return new SimpleStringProperty(name);
+//                }
+//            });
+//            tableView.getColumns().add(column);
+//        }
     }
 
     public void setDatabase(String database) {

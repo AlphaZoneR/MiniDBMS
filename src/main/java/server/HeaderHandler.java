@@ -45,9 +45,9 @@ public class HeaderHandler {
                     field.setUnique(fieldObject.getBoolean("isUnique"));
                 }
 
-                if (fieldObject.has("isForeign")) {
-                    field.setForeign(fieldObject.getBoolean("isForeign"));
-                }
+//                if (fieldObject.has("isForeign")) {
+//                    field.setForeign(fieldObject.getBoolean("isForeign"));
+//                }
 
                 if (fieldObject.has("isPrimary")) {
                     field.setPrimary(fieldObject.getBoolean("isPrimary"));
@@ -92,9 +92,9 @@ public class HeaderHandler {
                     field.setUnique(fieldObject.getBoolean("isUnique"));
                 }
 
-                if (fieldObject.has("isForeign")) {
-                    field.setForeign(fieldObject.getBoolean("isForeign"));
-                }
+//                if (fieldObject.has("isForeign")) {
+//                    field.setForeign(fieldObject.getBoolean("isForeign"));
+//                }
 
                 if (fieldObject.has("isPrimary")) {
                     field.setPrimary(fieldObject.getBoolean("isPrimary"));
