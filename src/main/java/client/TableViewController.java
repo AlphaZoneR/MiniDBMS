@@ -126,17 +126,20 @@ public class TableViewController {
                 } else if (text.matches("<=?[0-9]+")) {
                     // < or <=
                     if (text.charAt(1) == '=') {
-                        value = new JSONObject().put("$gte", text.substring(2));
-                    } else {
-                        value = new JSONObject().put("$gt", text.substring(1));
-                    }
-                } else {
-                    // > or >=
-                    if (text.charAt(1) == '=') {
                         value = new JSONObject().put("$lte", text.substring(2));
                     } else {
-                        value = new JSONObject().put("$lt", Integer.parseInt(text.substring(1)));
+                        value = new JSONObject().put("$lt", text.substring(1));
                     }
+                } else if (text.matches(">=?[0-9]+")) {
+                    // > or >=
+                    if (text.charAt(1) == '=') {
+                        value = new JSONObject().put("$gte", text.substring(2));
+                    } else {
+                        value = new JSONObject().put("$gt", Integer.parseInt(text.substring(1)));
+                    }
+                } else  {
+                    // String
+                    value = text;
                 }
                 if (value != null)
                     filter.put(key, value);
