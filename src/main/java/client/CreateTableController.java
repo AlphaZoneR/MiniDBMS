@@ -2,7 +2,9 @@ package client;
 
 import core.Field;
 import core.Table;
+import java.lang.Enum.*;
 import javafx.beans.property.SimpleBooleanProperty;
+import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -21,7 +23,7 @@ public class CreateTableController {
     private TextField fieldName;
 
     @FXML
-    private TextField fieldType;
+    private ComboBox fieldType;
 
     @FXML
     private CheckBox fieldForeign;
@@ -45,6 +47,8 @@ public class CreateTableController {
 
     private String database;
 
+    private Field.Type[] fTypes = Field.Type.values();
+
     public void initialize() {
 
         tableView.setColumnResizePolicy(TableView.CONSTRAINED_RESIZE_POLICY);
@@ -64,8 +68,9 @@ public class CreateTableController {
         TableColumn<String, Field> name = new TableColumn<>("Field Name");
         name.setCellValueFactory(new PropertyValueFactory<>("name"));
 
-        TableColumn<String, Field> type = new TableColumn<>("Field Type");
-        type.setCellValueFactory(new PropertyValueFactory<>("type"));
+        TableColumn<Field, String> type = new TableColumn<>("Field Type");
+        type.setCellValueFactory(cell -> new SimpleStringProperty((fTypes[cell.getValue().getType()]).name()));
+
 
         TableColumn<Field, Boolean> isForeign = new TableColumn<>("Is Foreign");
 //        isForeign.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getForeign()));
@@ -97,24 +102,29 @@ public class CreateTableController {
             }
         });
 
+        fieldType.getItems().addAll(
+                Field.Type.values()[0],
+                Field.Type.values()[1],
+                Field.Type.values()[2],
+                Field.Type.values()[3]);
+
         tableView.getColumns().addAll(name, type, isForeign, isPrimary, isUnique);
     }
 
     private void loadAddField() {
         addField.setOnAction(event -> {
-            if (fieldName.getText().equals("") || fieldType.getText().equals(""))
+            if (fieldName.getText().equals("") && fieldType.getValue().toString().isEmpty() )
                 return;
             String name = fieldName.getText();
-            String type = fieldType.getText();
+            int type = ((Field.Type)fieldType.getValue()).ordinal();
             Field field = new Field(name, type);
-//            field.setForeign(fieldForeign.isSelected());
             field.setPrimary(fieldPrimary.isSelected());
             field.setUnique(fieldUnique.isSelected());
             tableView.getItems().add(field);
             fields.add(field);
 
             fieldName.setText("");
-            fieldType.setText("");
+            fieldType.getSelectionModel().clearSelection();
             fieldForeign.setSelected(false);
             fieldPrimary.setSelected(false);
             fieldUnique.setSelected(false);
@@ -126,7 +136,8 @@ public class CreateTableController {
         createTable.setOnAction(event -> {
             String name = tableName.getText();
             Table table = new Table(name, fields);
-//            ConnectionManager.sendCreateTable(database, table);
+            System.out.println(ConnectionManager.sendUseDatabase(database));
+            System.out.println(ConnectionManager.sendCreateTable(table));
             Client.controller.loadTreeItems();
             Client.controller.clearPane();
         });

@@ -7,6 +7,21 @@ public class Field {
     private int type;
     private boolean isUnique, isPrimary, isIdentity, isNullable;
 
+    public enum Type {
+        StringType,
+        NumberType,
+        DateType,
+        ExternalType
+        //enum → int
+        //yourEnum.ordinal()
+        //int → enum
+        //EnumType.values()[someInt]
+        //String → enum
+        //EnumType.valueOf(yourString)
+        //enum → String
+        //yourEnum.name()
+    }
+
     public Field(String name, int type) {
         this.name = name;
         this.type = type;

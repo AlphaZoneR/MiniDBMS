@@ -1,6 +1,5 @@
 package client;
 
-import core.Table;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.MenuItem;
 

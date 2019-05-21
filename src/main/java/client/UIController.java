@@ -38,7 +38,6 @@ public class UIController {
         root.setExpanded(true);
         for (Database database : ConnectionManager.sendGetDropdown()) {
             DatabaseTreeItem db = new DatabaseTreeItem(database.getName());
-
             for (Table table : database.getTables()) {
                 db.getChildren().add(new TableTreeItem(database.getName(), table.getName()));
             }
@@ -61,12 +60,14 @@ public class UIController {
         treeView.setOnMouseClicked(event -> {
             if (event.getClickCount() == 2) {
                 TreeItem<String> item = treeView.getSelectionModel().getSelectedItem();
-                if (item.isLeaf()) {
-                    loadTableView(item.getParent().getValue(), item.getValue());
-                } else {
-                    if (!item.isExpanded()) {
-                        loadCreateTable(item.getValue());
-                        item.setExpanded(true);
+                if (item != null) {
+                    if (item.getClass() == TableTreeItem.class) {
+                        loadTableView(item.getParent().getValue(), item.getValue());
+                    } else {
+                        if (!item.isExpanded()) {
+                            loadCreateTable(item.getValue());
+                            item.setExpanded(true);
+                        }
                     }
                 }
             }

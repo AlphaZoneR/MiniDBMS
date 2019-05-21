@@ -4,20 +4,18 @@ package client;
 import core.Entry;
 import core.Table;
 
+import java.util.HashMap;
+
 public class Test {
-        public static void main(String[] args) {
-            System.out.println(ConnectionManager.sendCreateDatabase("database3"));
-            ConnectionManager.sendUseDatabase("database1");
-//            Table users = ConnectionManager.sendGetTable("users");
+    public static void main(String[] args) {
+        ConnectionManager.sendUseDatabase("World");
+//
+        Entry e = new Entry("peoples");
+        e.add("cnp","261");
+        e.add("age", "22");
+//
+        System.out.println(ConnectionManager.sendInsert("peoples", e));
+//      ConnectionManager.sendDeleteAll("embers");
 
-            Entry entry = new Entry("vines");
-            entry.add("name", "Bor3");
-            entry.add("country", "HU");
-//            System.out.println(entry.toJS);
-//            System.out.println(ConnectionManager.sendInsert("vines", entry));
-            System.out.println(ConnectionManager.sendDeleteAll("vines"));
-            System.out.println(ConnectionManager.sendSelectAll("vines"));
-
-
-        }
+    }
 }

@@ -122,6 +122,7 @@ public class ConnectionManager {
 
                 for (String tableKey: databases.getJSONObject(databaseKey).keySet()) {
                     Table table = new Table(databases.getJSONObject(databaseKey).getJSONObject(tableKey));
+                    table.setName(tableKey);
                     database.addTable(table);
                 }
 
@@ -182,7 +183,8 @@ public class ConnectionManager {
     }
 
     public static ArrayList<Entry> sendSelectByFilter(String name, JSONObject filter) {
-        String result = sendWithBody("http://localhost:5000/table/" + name, "GET", filter);
+        String result = sendWithBody("http://localhost:5000/table/filter/" + name, "POST", filter);
+        System.out.println(result);
 
         ArrayList<Entry> entries = new ArrayList<>();
         try {
