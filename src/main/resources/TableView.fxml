@@ -21,6 +21,7 @@
          <children>
             <Button fx:id="insertButton" contentDisplay="CENTER" minHeight="30.0" mnemonicParsing="false" prefHeight="30.0" text="INSERT" />
             <Button fx:id="filterButton" contentDisplay="CENTER" minHeight="30.0" mnemonicParsing="false" prefHeight="30.0" text="FILTER" />
+            <Button fx:id="deleteButton" contentDisplay="CENTER" minHeight="30.0" mnemonicParsing="false" prefHeight="30.0" text="DELETE" />
          </children>
          <VBox.margin>
             <Insets left="10.0" />

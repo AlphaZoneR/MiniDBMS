@@ -10,10 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
-import javafx.scene.control.Button;
-import javafx.scene.control.TableColumn;
-import javafx.scene.control.TableView;
-import javafx.scene.control.TextField;
+import javafx.scene.control.*;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.text.Text;
 import org.json.JSONObject;
@@ -36,6 +33,9 @@ public class TableViewController {
     @FXML
     private Button filterButton;
 
+    @FXML
+    private Button deleteButton;
+
     private String database;
 
     private String table;
@@ -55,7 +55,9 @@ public class TableViewController {
 
         initializeInsertButton(fieldNames);
         initializeFilterButton(fieldNames);
+        initializeDeleteButton(fieldNames);
 
+        initializeContextMenu(fieldNames);
     }
 
     private void loadData(Table t, List<Entry> entries, List<String> fieldNames) {
@@ -112,44 +114,84 @@ public class TableViewController {
     private void initializeFilterButton(List<String> fieldNames) {
         filterButton.setOnAction(event -> {
             JSONObject filter = new JSONObject();
-            for (Node node : flowPane.getChildren()) {
-                TextField textField = (TextField) node;
-                if (textField.getText().isEmpty())
-                    continue;
-                String key = textField.getPromptText();
-                String text = textField.getText();
-                textField.setText("");
-                Object value;
-                if(text.matches("[0-9]+")) {
-                    // ==
-                    value = Integer.parseInt(text);
-                } else if (text.matches("<=?[0-9]+")) {
-                    // < or <=
-                    if (text.charAt(1) == '=') {
-                        value = new JSONObject().put("$lte", text.substring(2));
-                    } else {
-                        value = new JSONObject().put("$lt", text.substring(1));
-                    }
-                } else if (text.matches(">=?[0-9]+")) {
-                    // > or >=
-                    if (text.charAt(1) == '=') {
-                        value = new JSONObject().put("$gte", text.substring(2));
-                    } else {
-                        value = new JSONObject().put("$gt", Integer.parseInt(text.substring(1)));
-                    }
-                } else  {
-                    // String
-                    value = text;
-                }
-                if (value != null)
-                    filter.put(key, value);
-            }
+            loadJSONFromTextFields(filter);
+
             ConnectionManager.sendUseDatabase(database);
             Table t = ConnectionManager.sendGetTable(table);
-            System.out.println(filter);
             List<Entry> entries = ConnectionManager.sendSelectByFilter(table, filter);
             loadData(t, entries, fieldNames);
         });
+    }
+
+    private void initializeDeleteButton(List<String> fieldNames) {
+        deleteButton.setOnAction(event -> {
+            JSONObject filter = new JSONObject();
+            loadJSONFromTextFields(filter);
+
+            ConnectionManager.sendUseDatabase(database);
+            Table t = ConnectionManager.sendGetTable(table);
+            System.out.println(ConnectionManager.sendDeleteByFilter(table, filter));
+            List<Entry> entries = ConnectionManager.sendSelectAll(table);
+            loadData(t, entries, fieldNames);
+        });
+    }
+
+    private void loadJSONFromTextFields(JSONObject filter) {
+        for (Node node : flowPane.getChildren()) {
+            TextField textField = (TextField) node;
+            if (textField.getText().isEmpty())
+                continue;
+            String key = textField.getPromptText();
+            String text = textField.getText();
+            textField.setText("");
+            Object value;
+            if(text.matches("[0-9]+")) {
+                // ==
+                value = Integer.parseInt(text);
+            } else if (text.matches("<=?[0-9]+")) {
+                // < or <=
+                if (text.charAt(1) == '=') {
+                    value = new JSONObject().put("$lte", Integer.parseInt(text.substring(2)));
+                } else {
+                    value = new JSONObject().put("$lt", Integer.parseInt(text.substring(1)));
+                }
+            } else if (text.matches(">=?[0-9]+")) {
+                // > or >=
+                if (text.charAt(1) == '=') {
+                    value = new JSONObject().put("$gte", Integer.parseInt(text.substring(2)));
+                } else {
+                    value = new JSONObject().put("$gt", Integer.parseInt(text.substring(1)));
+                }
+            } else  {
+                // String
+                value = text;
+            }
+            if (value != null)
+                filter.put(key, value);
+        }
+    }
+
+    private void initializeContextMenu(List<String> fieldNames) {
+        ContextMenu contextMenu = new ContextMenu();
+        MenuItem delete = new MenuItem("DELETE ENTRY");
+        delete.setOnAction(event -> {
+            ObservableList item = (ObservableList)tableView.getSelectionModel().getSelectedItem();
+            int index = 0;
+            for (Node node : flowPane.getChildren()) {
+                TextField textField = (TextField) node;
+                textField.setText((String)item.get(index++));
+            }
+            JSONObject filter = new JSONObject();
+            loadJSONFromTextFields(filter);
+
+            ConnectionManager.sendUseDatabase(database);
+            Table t = ConnectionManager.sendGetTable(table);
+            System.out.println(ConnectionManager.sendDeleteByFilter(table, filter));
+            List<Entry> entries = ConnectionManager.sendSelectAll(table);
+            loadData(t, entries, fieldNames);
+        });
+        contextMenu.getItems().add(delete);
+        tableView.setContextMenu(contextMenu);
     }
 
     public void setDatabase(String database) {
