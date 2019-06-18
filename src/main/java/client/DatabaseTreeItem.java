@@ -1,6 +1,7 @@
 package client;
 
 import javafx.scene.control.ContextMenu;
+import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 
 public class DatabaseTreeItem extends AbstractTreeItem {
@@ -27,7 +28,13 @@ public class DatabaseTreeItem extends AbstractTreeItem {
             Client.controller.loadCreateTable(database);
         });
 
-        return new ContextMenu(delete, create);
+        MenuItem select = new MenuItem("SELECT");
+        select.setOnAction(event -> {
+            ConnectionManager.sendUseDatabase(database);
+            Client.controller.loadSelect(database);
+        });
+
+        return new ContextMenu(delete, create, select);
     }
 }
 

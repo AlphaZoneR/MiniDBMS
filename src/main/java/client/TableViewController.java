@@ -28,6 +28,9 @@ public class TableViewController {
     private FlowPane flowPane;
 
     @FXML
+    private FlowPane buttonPane;
+
+    @FXML
     private Button insertButton;
 
     @FXML
@@ -60,6 +63,17 @@ public class TableViewController {
         initializeContextMenu(fieldNames);
     }
 
+    public void loadSelectView(String query) {
+        ConnectionManager.sendUseDatabase(database);
+        List<Entry> entries = ConnectionManager.sendQuery(query);
+        List<String> fieldNames = new ArrayList<>();
+        fieldNames.addAll(entries.get(0).getKeys());
+
+        loadData(entries, fieldNames);
+
+        buttonPane.getChildren().clear();
+    }
+
     private void loadData(Table t, List<Entry> entries, List<String> fieldNames) {
         tableView.getItems().clear();
         tableView.getColumns().clear();
@@ -73,6 +87,27 @@ public class TableViewController {
             column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
             tableView.getColumns().add(column);
         }
+        loadEntries(data, entries, fieldNames);
+        tableView.setItems(data);
+    }
+
+    private void loadData(List<Entry> entries, List<String> fieldNames) {
+        tableView.getItems().clear();
+        tableView.getColumns().clear();
+        ObservableList<ObservableList> data = FXCollections.observableArrayList();
+        int i = 0;
+        for (String field : fieldNames) {
+            final int j = i;
+            i++;
+            TableColumn<ObservableList<String>, String> column = new TableColumn<>(field);
+            column.setCellValueFactory(param -> new SimpleStringProperty(param.getValue().get(j)));
+            tableView.getColumns().add(column);
+        }
+        loadEntries(data, entries, fieldNames);
+        tableView.setItems(data);
+    }
+
+    private void loadEntries(ObservableList<ObservableList> data, List<Entry> entries, List<String> fieldNames) {
         for (Entry entry : entries) {
             ObservableList<String> row = FXCollections.observableArrayList();
             for (String field : fieldNames) {
@@ -80,7 +115,6 @@ public class TableViewController {
             }
             data.add(row);
         }
-        tableView.setItems(data);
     }
 
     private void loadInsert(List<String> fieldNames) {

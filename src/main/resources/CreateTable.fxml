@@ -10,93 +10,90 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Text?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.CreateTableController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0"
+      prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="client.CreateTableController">
     <children>
         <VBox prefWidth="100.0">
             <VBox.margin>
-                <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+                <Insets bottom="50.0" left="50.0" right="50.0" top="50.0"/>
             </VBox.margin>
             <children>
                 <FlowPane>
                     <VBox.margin>
-                        <Insets />
+                        <Insets/>
                     </VBox.margin>
                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Table Name" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Table Name"/>
                         <TextField fx:id="tableName">
                             <FlowPane.margin>
-                                <Insets left="10.0" />
+                                <Insets left="10.0"/>
                             </FlowPane.margin>
                         </TextField>
                     </children>
                 </FlowPane>
                 <FlowPane>
                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Table Fields" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Table Fields"/>
                     </children>
                     <VBox.margin>
-                        <Insets top="20.0" />
+                        <Insets top="20.0"/>
                     </VBox.margin>
                 </FlowPane>
                 <TableView fx:id="tableView">
                     <VBox.margin>
-                        <Insets top="10.0" />
+                        <Insets top="10.0"/>
                     </VBox.margin>
                 </TableView>
                 <FlowPane>
                     <children>
-                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Add New Field" />
+                        <Text strokeType="OUTSIDE" strokeWidth="0.0" text="Add New Field"/>
                     </children>
                     <VBox.margin>
-                        <Insets top="20.0" />
+                        <Insets top="20.0"/>
                     </VBox.margin>
                 </FlowPane>
                 <FlowPane>
                     <VBox.margin>
-                        <Insets top="10.0" />
+                        <Insets top="10.0"/>
                     </VBox.margin>
                     <children>
-                        <TextField fx:id="fieldName" prefWidth="100.0" promptText="Field Name" />
-                  <ComboBox fx:id="fieldType" prefWidth="150.0" promptText="Field Type">
-                     <FlowPane.margin>
-                        <Insets left="10.0" />
-                     </FlowPane.margin>
-                  </ComboBox>
-                        <CheckBox fx:id="fieldForeign" mnemonicParsing="false" text="Foreign">
+                        <TextField fx:id="fieldName" prefWidth="100.0" promptText="Field Name"/>
+                        <ComboBox fx:id="fieldType" prefWidth="150.0" promptText="Field Type">
                             <FlowPane.margin>
-                                <Insets left="10.0" />
+                                <Insets left="10.0"/>
                             </FlowPane.margin>
-                        </CheckBox>
+                        </ComboBox>
                         <CheckBox fx:id="fieldPrimary" mnemonicParsing="false" text="Primary">
                             <FlowPane.margin>
-                                <Insets left="10.0" />
+                                <Insets left="10.0"/>
                             </FlowPane.margin>
                         </CheckBox>
                         <CheckBox fx:id="fieldUnique" mnemonicParsing="false" text="Unique">
                             <FlowPane.margin>
-                                <Insets left="10.0" />
+                                <Insets left="10.0"/>
                             </FlowPane.margin>
                         </CheckBox>
                         <Button fx:id="addField" mnemonicParsing="false" text="ADD">
                             <FlowPane.margin>
-                                <Insets left="20.0" />
+                                <Insets left="20.0"/>
                             </FlowPane.margin>
                         </Button>
                     </children>
                 </FlowPane>
                 <FlowPane>
                     <VBox.margin>
-                        <Insets top="100.0" />
+                        <Insets top="100.0"/>
                     </VBox.margin>
                     <children>
                         <Button fx:id="createTable" mnemonicParsing="false" text="CREATE TABLE">
                             <FlowPane.margin>
-                                <Insets />
+                                <Insets/>
                             </FlowPane.margin>
                         </Button>
                         <Button fx:id="cancelTable" mnemonicParsing="false" text="CANCEL">
                             <FlowPane.margin>
-                                <Insets left="10.0" />
+                                <Insets left="10.0"/>
                             </FlowPane.margin>
                         </Button>
                     </children>

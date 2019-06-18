@@ -4,8 +4,10 @@ import core.Database;
 import core.Table;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.Node;
-import javafx.scene.control.*;
+import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
+import javafx.scene.control.TreeItem;
+import javafx.scene.control.TreeView;
 import javafx.scene.layout.Pane;
 
 import java.io.IOException;
@@ -99,6 +101,39 @@ public class UIController {
             controller.setDatabase(database);
             controller.setTable(table);
             controller.loadTableView();
+
+            clearPane();
+            dynamicPane.getChildren().add(pane);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadSelect(String database) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(UIController.class.getResource("/Select.fxml"));
+            Pane pane = fxmlLoader.load();
+
+            SelectController controller = fxmlLoader.getController();
+            controller.setDatabase(database);
+
+            clearPane();
+            dynamicPane.getChildren().add(pane);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadSelectView(String database, String query) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(UIController.class.getResource("/TableView.fxml"));
+            Pane pane = fxmlLoader.load();
+
+            TableViewController controller = fxmlLoader.getController();
+            controller.setDatabase(database);
+            controller.loadSelectView(query);
 
             clearPane();
             dynamicPane.getChildren().add(pane);

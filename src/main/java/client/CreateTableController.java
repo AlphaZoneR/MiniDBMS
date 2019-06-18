@@ -26,9 +26,6 @@ public class CreateTableController {
     private ComboBox fieldType;
 
     @FXML
-    private CheckBox fieldForeign;
-
-    @FXML
     private CheckBox fieldPrimary;
 
     @FXML
@@ -71,17 +68,6 @@ public class CreateTableController {
         TableColumn<Field, String> type = new TableColumn<>("Field Type");
         type.setCellValueFactory(cell -> new SimpleStringProperty((fTypes[cell.getValue().getType()]).name()));
 
-
-        TableColumn<Field, Boolean> isForeign = new TableColumn<>("Is Foreign");
-//        isForeign.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getForeign()));
-//        isForeign.setCellFactory(col -> new TableCell<Field, Boolean>() {
-//            @Override
-//            protected void updateItem(Boolean item, boolean empty) {
-//                super.updateItem(item, empty);
-//                setText(empty ? null : item ? "True" : "False");
-//            }
-//        });
-
         TableColumn<Field, Boolean> isPrimary = new TableColumn<>("Is Primary");
         isPrimary.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getPrimary()));
         isPrimary.setCellFactory(col -> new TableCell<Field, Boolean>() {
@@ -108,7 +94,7 @@ public class CreateTableController {
                 Field.Type.values()[2],
                 Field.Type.values()[3]);
 
-        tableView.getColumns().addAll(name, type, isForeign, isPrimary, isUnique);
+        tableView.getColumns().addAll(name, type, isPrimary, isUnique);
     }
 
     private void loadAddField() {
@@ -125,7 +111,6 @@ public class CreateTableController {
 
             fieldName.setText("");
             fieldType.getSelectionModel().clearSelection();
-            fieldForeign.setSelected(false);
             fieldPrimary.setSelected(false);
             fieldUnique.setSelected(false);
 
