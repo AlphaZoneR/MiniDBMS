@@ -222,6 +222,27 @@ public class ConnectionManager {
         return sendWithBody("http://localhost:5000/table/" + name, "DELETE", filter);
     }
 
+    public static ArrayList<Entry> sendQuery(String query) {
+        JSONObject body = new JSONObject();
+        body.put("query", query);
+        String result = sendWithBody("http://localhost:5000/join/", "POST", body);
+        ArrayList<Entry> entries = new ArrayList<>();
+
+        try {
+            JSONArray array = new JSONArray(result);
+
+            for (int i = 0; i < array.length(); ++i) {
+                Entry entry = new Entry(array.getJSONObject(i));
+                entries.add(entry);
+            }
+
+            return entries;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return new ArrayList<>();
+        }
+    }
+
 
 
 }
