@@ -11,6 +11,8 @@ public class Client extends Application {
 
     static UIController controller;
 
+    static String lastQuery;
+
     @Override
     public void start(Stage firstStage) throws Exception {
         FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("/UI.fxml"));

@@ -67,9 +67,11 @@ public class TableViewController {
         ConnectionManager.sendUseDatabase(database);
         List<Entry> entries = ConnectionManager.sendQuery(query);
         List<String> fieldNames = new ArrayList<>();
-        fieldNames.addAll(entries.get(0).getKeys());
+        if(entries.size() > 0) {
+            fieldNames.addAll(entries.get(0).getKeys());
 
-        loadData(entries, fieldNames);
+            loadData(entries, fieldNames);
+        }
 
         buttonPane.getChildren().clear();
     }

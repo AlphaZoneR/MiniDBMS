@@ -2,12 +2,12 @@ package client;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
-import javafx.scene.control.TextField;
+import javafx.scene.control.TextArea;
 
 public class SelectController {
 
     @FXML
-    TextField textField;
+    TextArea textArea;
 
     @FXML
     Button selectButton;
@@ -20,8 +20,12 @@ public class SelectController {
     }
 
     private void loadSendQuery() {
+        if (Client.lastQuery != null) {
+            textArea.setText(Client.lastQuery);
+        }
         selectButton.setOnAction(event -> {
-            Client.controller.loadSelectView(database, textField.getText());
+            Client.lastQuery = textArea.getText();
+            Client.controller.loadSelectView(database, textArea.getText());
         });
     }
 
