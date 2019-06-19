@@ -1,6 +1,5 @@
 package client;
 
-
 import core.Entry;
 import core.Field;
 import core.Table;
@@ -65,15 +64,19 @@ public class TableViewController {
 
     public void loadSelectView(String query) {
         ConnectionManager.sendUseDatabase(database);
-        List<Entry> entries = ConnectionManager.sendQuery(query);
-        List<String> fieldNames = new ArrayList<>();
-        if(entries.size() > 0) {
-            fieldNames.addAll(entries.get(0).getKeys());
+        try {
+            List<Entry> entries = ConnectionManager.sendQuery(query);
+            List<String> fieldNames = new ArrayList<>();
+            if(entries.size() > 0) {
+                fieldNames.addAll(entries.get(0).getKeys());
 
-            loadData(entries, fieldNames);
+                loadData(entries, fieldNames);
+            }
+
+            buttonPane.getChildren().clear();
+        } catch (RuntimeException e) {
+            System.out.println(e.getMessage());
         }
-
-        buttonPane.getChildren().clear();
     }
 
     private void loadData(Table t, List<Entry> entries, List<String> fieldNames) {

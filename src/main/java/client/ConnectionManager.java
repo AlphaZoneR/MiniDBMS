@@ -45,7 +45,7 @@ public class ConnectionManager {
                 return readFromInputStream(httpURLConnection.getInputStream());
             }
 
-            return readFromInputStream(httpURLConnection.getErrorStream());
+            throw new RuntimeException(readFromInputStream(httpURLConnection.getErrorStream()));
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class ConnectionManager {
                 return readFromInputStream(httpURLConnection.getInputStream());
             }
 
-            return readFromInputStream(httpURLConnection.getErrorStream());
+            throw new RuntimeException(readFromInputStream(httpURLConnection.getErrorStream()));
 
         } catch (MalformedURLException e) {
             e.printStackTrace();
@@ -145,7 +145,7 @@ public class ConnectionManager {
             tObject.setName(name);
 
             return tObject;
-        } catch (Exception e) {
+        } catch (JSONException e) {
             e.printStackTrace();
             return null;
         }
