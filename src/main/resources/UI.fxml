@@ -10,30 +10,31 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0"
-      prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1"
-      fx:controller="client.UIController">
+<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="768.0" prefWidth="1024.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="client.UIController">
     <children>
         <GridPane>
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="224.0"/>
-                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="800.0"/>
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="224.0" />
+                <ColumnConstraints hgrow="SOMETIMES" maxWidth="-Infinity" minWidth="-Infinity" prefWidth="800.0" />
             </columnConstraints>
             <rowConstraints>
-                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="738.0" vgrow="SOMETIMES"/>
-                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES"/>
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="738.0" vgrow="SOMETIMES" />
+                <RowConstraints maxHeight="-Infinity" minHeight="-Infinity" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <TreeView fx:id="treeView" GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="200.0"
-                          prefWidth="200.0"/>
+            <FlowPane prefHeight="200.0" prefWidth="200.0">
+               <children>
+                      <TreeView fx:id="treeView" maxHeight="-Infinity" minHeight="-Infinity" prefHeight="708.0" prefWidth="224.0" />
+                        <TextField fx:id="createDbName" prefHeight="30.0" prefWidth="150.0" promptText="New Database" />
+                        <Button fx:id="createDbButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="74.0" text="CREATE" />
+               </children>
+            </FlowPane>
                 <FlowPane GridPane.columnIndex="0" GridPane.rowIndex="1">
                     <children>
-                        <TextField fx:id="createDbName" prefHeight="30.0" prefWidth="150.0" promptText="New Database"/>
-                        <Button fx:id="createDbButton" mnemonicParsing="false" prefHeight="30.0" prefWidth="74.0"
-                                text="CREATE"/>
+                  <TextField fx:id="responseField" prefHeight="30.0" prefWidth="224.0" />
                     </children>
                 </FlowPane>
-                <Pane fx:id="dynamicPane" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+                <Pane fx:id="dynamicPane" GridPane.columnIndex="1" GridPane.rowIndex="0" />
             </children>
         </GridPane>
     </children>

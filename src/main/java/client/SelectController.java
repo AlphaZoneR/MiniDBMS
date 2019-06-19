@@ -7,15 +7,14 @@ import javafx.scene.control.TextArea;
 public class SelectController {
 
     @FXML
-    TextArea textArea;
+    private TextArea textArea;
 
     @FXML
-    Button selectButton;
+    private Button selectButton;
 
     private String database;
 
     public void initialize() {
-
         loadSendQuery();
     }
 

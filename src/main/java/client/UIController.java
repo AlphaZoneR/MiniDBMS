@@ -26,24 +26,33 @@ public class UIController {
     @FXML
     private Pane dynamicPane;
 
+    @FXML
+    private TextField responseField;
+
     public void initialize() {
         loadTreeItems();
 
         loadCreateButton();
 
         loadListener();
+
+        responseField.setEditable(false);
     }
 
     void loadTreeItems() {
         treeView.setShowRoot(false);
         TreeItem<String> root = new TreeItem<>("Root Node");
         root.setExpanded(true);
-        for (Database database : ConnectionManager.sendGetDropdown()) {
-            DatabaseTreeItem db = new DatabaseTreeItem(database.getName());
-            for (Table table : database.getTables()) {
-                db.getChildren().add(new TableTreeItem(database.getName(), table.getName()));
+        try {
+            for (Database database : ConnectionManager.sendGetDropdown()) {
+                DatabaseTreeItem db = new DatabaseTreeItem(database.getName());
+                for (Table table : database.getTables()) {
+                    db.getChildren().add(new TableTreeItem(database.getName(), table.getName()));
+                }
+                root.getChildren().add(db);
             }
-            root.getChildren().add(db);
+        } catch (RuntimeException e) {
+            Client.controller.setResponse(e.getMessage());
         }
         treeView.setRoot(root);
         treeView.setCellFactory(p -> new MyTreeCell());
@@ -52,8 +61,12 @@ public class UIController {
     private void loadCreateButton() {
         createDbButton.setOnAction(event -> {
             String databaseName = createDbName.getText();
-            ConnectionManager.sendCreateDatabase(databaseName);
-            loadTreeItems();
+            try {
+                ConnectionManager.sendCreateDatabase(databaseName);
+                loadTreeItems();
+            } catch (RuntimeException e) {
+                Client.controller.setResponse(e.getMessage());
+            }
             createDbName.setText("");
         });
     }
@@ -143,8 +156,40 @@ public class UIController {
         }
     }
 
+    public void loadIndex(String database, String table) {
+        try {
+            FXMLLoader fxmlLoader = new FXMLLoader(UIController.class.getResource("/Index.fxml"));
+            Pane pane = fxmlLoader.load();
+
+            IndexController controller = fxmlLoader.getController();
+            controller.setDatabase(database);
+            controller.setTable(table);
+
+            clearPane();
+            dynamicPane.getChildren().add(pane);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void clearPane() {
         dynamicPane.getChildren().clear();
+    }
+
+    public void setResponse(String resp) {
+        responseField.setText(resp);
+        if (!resp.equals("")) {
+            responseField.setStyle("-fx-text-inner-color: #77000e;");
+            new Thread(() -> {
+                try {
+                    Thread.sleep(5000);
+                    setResponse("");
+                } catch (InterruptedException e) {
+                    e.getMessage();
+                }
+            }).start();
+        }
     }
 
 }

@@ -19,14 +19,22 @@ public class TableTreeItem extends AbstractTreeItem{
     public ContextMenu getMenu(){
         MenuItem delete = new MenuItem("DELETE");
         delete.setOnAction(event -> {
+            try {
                 ConnectionManager.sendUseDatabase(database);
                 ConnectionManager.sendDropTable(table);
-                Client.controller.loadTreeItems();
+            } catch (RuntimeException e) {
+                Client.controller.setResponse(e.getMessage());
+            }
+            Client.controller.loadTreeItems();
 
         });
+
         MenuItem view = new MenuItem("VIEW");
         view.setOnAction(event -> Client.controller.loadTableView(database, table));
 
-        return new ContextMenu(delete, view);
+        MenuItem index = new MenuItem("INDEX");
+        index.setOnAction(event -> Client.controller.loadIndex(database, table));
+
+        return new ContextMenu(delete, view, index);
     }
 }

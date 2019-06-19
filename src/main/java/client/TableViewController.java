@@ -47,27 +47,32 @@ public class TableViewController {
     }
 
     public void loadTableView() {
-        ConnectionManager.sendUseDatabase(database);
-        Table t = ConnectionManager.sendGetTable(table);
-        List<Entry> entries = ConnectionManager.sendSelectAll(table);
-        List<String> fieldNames = new ArrayList<>();
+        try {
+            ConnectionManager.sendUseDatabase(database);
+            Table t = ConnectionManager.sendGetTable(table);
 
-        loadData(t, entries, fieldNames);
-        loadInsert(fieldNames);
+            List<Entry> entries = ConnectionManager.sendSelectAll(table);
+            List<String> fieldNames = new ArrayList<>();
 
-        initializeInsertButton(fieldNames);
-        initializeFilterButton(fieldNames);
-        initializeDeleteButton(fieldNames);
+            loadData(t, entries, fieldNames);
+            loadInsert(fieldNames);
 
-        initializeContextMenu(fieldNames);
+            initializeInsertButton(fieldNames);
+            initializeFilterButton(fieldNames);
+            initializeDeleteButton(fieldNames);
+
+            initializeContextMenu(fieldNames);
+        } catch (RuntimeException e) {
+            Client.controller.setResponse(e.getMessage());
+        }
     }
 
     public void loadSelectView(String query) {
-        ConnectionManager.sendUseDatabase(database);
         try {
+            ConnectionManager.sendUseDatabase(database);
             List<Entry> entries = ConnectionManager.sendQuery(query);
             List<String> fieldNames = new ArrayList<>();
-            if(entries.size() > 0) {
+            if (entries.size() > 0) {
                 fieldNames.addAll(entries.get(0).getKeys());
 
                 loadData(entries, fieldNames);
@@ -75,7 +80,7 @@ public class TableViewController {
 
             buttonPane.getChildren().clear();
         } catch (RuntimeException e) {
-            System.out.println(e.getMessage());
+            Client.controller.setResponse(e.getMessage());
         }
     }
 
@@ -133,45 +138,46 @@ public class TableViewController {
 
     private void initializeInsertButton(List<String> fieldNames) {
         insertButton.setOnAction(event -> {
-            Entry entry = new Entry(table);
-            for (Node node : flowPane.getChildren()) {
-                TextField textField = (TextField) node;
-                if (textField.getText().isEmpty())
-                    return;
-                entry.add(textField.getPromptText(), textField.getText());
-                textField.setText("");
-            }
-            ConnectionManager.sendUseDatabase(database);
-            ConnectionManager.sendInsert(table, entry);
+            try {
+                Entry entry = new Entry(table);
+                for (Node node : flowPane.getChildren()) {
+                    TextField textField = (TextField) node;
+                    if (textField.getText().isEmpty())
+                        return;
+                    entry.add(textField.getPromptText(), textField.getText());
+                    textField.setText("");
+                }
+                ConnectionManager.sendUseDatabase(database);
+                ConnectionManager.sendInsert(table, entry);
 
-            Table t = ConnectionManager.sendGetTable(table);
-            List<Entry> entries = ConnectionManager.sendSelectAll(table);
-            loadData(t, entries, fieldNames);
+                Table t = ConnectionManager.sendGetTable(table);
+                List<Entry> entries = ConnectionManager.sendSelectAll(table);
+                loadData(t, entries, fieldNames);
+            } catch (RuntimeException e) {
+                Client.controller.setResponse(e.getMessage());
+            }
         });
     }
 
     private void initializeFilterButton(List<String> fieldNames) {
         filterButton.setOnAction(event -> {
-            JSONObject filter = new JSONObject();
-            loadJSONFromTextFields(filter);
+            try {
+                JSONObject filter = new JSONObject();
+                loadJSONFromTextFields(filter);
 
-            ConnectionManager.sendUseDatabase(database);
-            Table t = ConnectionManager.sendGetTable(table);
-            List<Entry> entries = ConnectionManager.sendSelectByFilter(table, filter);
-            loadData(t, entries, fieldNames);
+                ConnectionManager.sendUseDatabase(database);
+                Table t = ConnectionManager.sendGetTable(table);
+                List<Entry> entries = ConnectionManager.sendSelectByFilter(table, filter);
+                loadData(t, entries, fieldNames);
+            } catch (RuntimeException e) {
+                Client.controller.setResponse(e.getMessage());
+            }
         });
     }
 
     private void initializeDeleteButton(List<String> fieldNames) {
         deleteButton.setOnAction(event -> {
-            JSONObject filter = new JSONObject();
-            loadJSONFromTextFields(filter);
-
-            ConnectionManager.sendUseDatabase(database);
-            Table t = ConnectionManager.sendGetTable(table);
-            System.out.println(ConnectionManager.sendDeleteByFilter(table, filter));
-            List<Entry> entries = ConnectionManager.sendSelectAll(table);
-            loadData(t, entries, fieldNames);
+            deleteByFilter(fieldNames);
         });
     }
 
@@ -184,7 +190,7 @@ public class TableViewController {
             String text = textField.getText();
             textField.setText("");
             Object value;
-            if(text.matches("[0-9]+")) {
+            if (text.matches("[0-9]+")) {
                 // ==
                 value = Integer.parseInt(text);
             } else if (text.matches("<=?[0-9]+")) {
@@ -201,7 +207,7 @@ public class TableViewController {
                 } else {
                     value = new JSONObject().put("$gt", Integer.parseInt(text.substring(1)));
                 }
-            } else  {
+            } else {
                 // String
                 value = text;
             }
@@ -214,12 +220,24 @@ public class TableViewController {
         ContextMenu contextMenu = new ContextMenu();
         MenuItem delete = new MenuItem("DELETE ENTRY");
         delete.setOnAction(event -> {
-            ObservableList item = (ObservableList)tableView.getSelectionModel().getSelectedItem();
+            ObservableList item = (ObservableList) tableView.getSelectionModel().getSelectedItem();
             int index = 0;
             for (Node node : flowPane.getChildren()) {
                 TextField textField = (TextField) node;
-                textField.setText((String)item.get(index++));
+                textField.setText((String) item.get(index++));
             }
+            deleteByFilter(fieldNames);
+        });
+        MenuItem index = new MenuItem("INDEX FIELD");
+        index.setOnAction(event -> {
+            System.out.println(tableView.getSelectionModel().getFocusedIndex());
+        });
+        contextMenu.getItems().add(delete);
+        tableView.setContextMenu(contextMenu);
+    }
+
+    private void deleteByFilter(List<String> fieldNames) {
+        try {
             JSONObject filter = new JSONObject();
             loadJSONFromTextFields(filter);
 
@@ -228,9 +246,9 @@ public class TableViewController {
             System.out.println(ConnectionManager.sendDeleteByFilter(table, filter));
             List<Entry> entries = ConnectionManager.sendSelectAll(table);
             loadData(t, entries, fieldNames);
-        });
-        contextMenu.getItems().add(delete);
-        tableView.setContextMenu(contextMenu);
+        } catch (RuntimeException e) {
+            Client.controller.setResponse(e.getMessage());
+        }
     }
 
     public void setDatabase(String database) {

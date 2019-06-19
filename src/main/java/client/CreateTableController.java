@@ -2,12 +2,12 @@ package client;
 
 import core.Field;
 import core.Table;
-import java.lang.Enum.*;
 import javafx.beans.property.SimpleBooleanProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.fxml.FXML;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
+import javafx.scene.layout.FlowPane;
 
 import java.util.ArrayList;
 
@@ -20,6 +20,9 @@ public class CreateTableController {
     private TableView tableView;
 
     @FXML
+    private FlowPane flowPane;
+
+    @FXML
     private TextField fieldName;
 
     @FXML
@@ -30,6 +33,15 @@ public class CreateTableController {
 
     @FXML
     private CheckBox fieldUnique;
+
+    @FXML
+    private CheckBox fieldIdentity;
+
+    @FXML
+    private CheckBox fieldNullable;
+
+    @FXML
+    private TextField fieldRef;
 
     @FXML
     private Button addField;
@@ -59,6 +71,8 @@ public class CreateTableController {
         loadCreateTable();
 
         loadCancelTable();
+
+        loadListener();
     }
 
     private void initializeColumnFactory() {
@@ -80,13 +94,15 @@ public class CreateTableController {
 
         TableColumn<Field, Boolean> isUnique = new TableColumn<>("Is Unique");
         isUnique.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getUnique()));
-        isUnique.setCellFactory(col -> new TableCell<Field, Boolean>() {
-            @Override
-            protected void updateItem(Boolean item, boolean empty) {
-                super.updateItem(item, empty);
-                setText(empty ? null : item ? "True" : "False");
-            }
-        });
+        isUnique.setCellFactory(col -> factory());
+
+        TableColumn<Field, Boolean> isIdentity = new TableColumn<>("Is Identity");
+        isIdentity.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getIdentity()));
+        isIdentity.setCellFactory(col -> factory());
+
+        TableColumn<Field, Boolean> isNullable = new TableColumn<>("Is Nullable");
+        isNullable.setCellValueFactory(cell -> new SimpleBooleanProperty(cell.getValue().getNullable()));
+        isNullable.setCellFactory(col -> factory());
 
         fieldType.getItems().addAll(
                 Field.Type.values()[0],
@@ -94,25 +110,48 @@ public class CreateTableController {
                 Field.Type.values()[2],
                 Field.Type.values()[3]);
 
-        tableView.getColumns().addAll(name, type, isPrimary, isUnique);
+        tableView.getColumns().addAll(name, type, isPrimary, isUnique, isIdentity, isNullable);
+    }
+
+    private TableCell<Field, Boolean> factory() {
+        return new TableCell<Field, Boolean>() {
+            @Override
+            protected void updateItem(Boolean item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty ? null : item ? "True" : "False");
+            }
+        };
     }
 
     private void loadAddField() {
         addField.setOnAction(event -> {
-            if (fieldName.getText().equals("") && fieldType.getValue().toString().isEmpty() )
+            if (fieldName.getText().equals("") && fieldType.getValue().toString().isEmpty())
                 return;
             String name = fieldName.getText();
-            int type = ((Field.Type)fieldType.getValue()).ordinal();
-            Field field = new Field(name, type);
-            field.setPrimary(fieldPrimary.isSelected());
-            field.setUnique(fieldUnique.isSelected());
-            tableView.getItems().add(field);
-            fields.add(field);
+            try {
+                int type = ((Field.Type) fieldType.getValue()).ordinal();
+
+                Field field = new Field(name, type);
+                if (type < 3) {
+                    field.setPrimary(fieldPrimary.isSelected());
+                    field.setUnique(fieldUnique.isSelected());
+                    field.setIdentity(fieldIdentity.isSelected());
+                    field.setNull(fieldNullable.isSelected());
+                } else {
+                    field.setRef(fieldRef.getText());
+                }
+                tableView.getItems().add(field);
+                fields.add(field);
+            } catch (NullPointerException e) {
+                Client.controller.setResponse("FieldType not set");
+            }
 
             fieldName.setText("");
             fieldType.getSelectionModel().clearSelection();
             fieldPrimary.setSelected(false);
             fieldUnique.setSelected(false);
+            fieldIdentity.setSelected(false);
+            fieldNullable.setSelected(false);
 
         });
     }
@@ -121,10 +160,30 @@ public class CreateTableController {
         createTable.setOnAction(event -> {
             String name = tableName.getText();
             Table table = new Table(name, fields);
-            System.out.println(ConnectionManager.sendUseDatabase(database));
-            System.out.println(ConnectionManager.sendCreateTable(table));
+            try {
+                ConnectionManager.sendUseDatabase(database);
+                ConnectionManager.sendCreateTable(table);
+            } catch (RuntimeException e) {
+                Client.controller.setResponse(e.getMessage());
+            }
             Client.controller.loadTreeItems();
             Client.controller.clearPane();
+        });
+    }
+
+    private void loadListener() {
+        flowPane.getChildren().clear();
+        flowPane.getChildren().addAll(fieldName, fieldType, fieldPrimary, fieldUnique, fieldIdentity, fieldNullable, addField);
+
+        fieldType.valueProperty().addListener((observable, oldValue, newValue) -> {
+            if (oldValue != null && ((Field.Type)oldValue).name().equals("ExternalType")) {
+                flowPane.getChildren().clear();
+                flowPane.getChildren().addAll(fieldName, fieldType, fieldPrimary, fieldUnique, fieldIdentity, fieldNullable, addField);
+            }
+            if (newValue != null && ((Field.Type)newValue).name().equals("ExternalType")) {
+                flowPane.getChildren().clear();
+                flowPane.getChildren().addAll(fieldName, fieldType, fieldRef, addField);
+            }
         });
     }
 
