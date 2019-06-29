@@ -142,11 +142,10 @@ public class TableViewController {
                 Entry entry = new Entry(table);
                 for (Node node : flowPane.getChildren()) {
                     TextField textField = (TextField) node;
-                    if (textField.getText().isEmpty())
-                        return;
                     entry.add(textField.getPromptText(), textField.getText());
                     textField.setText("");
                 }
+
                 ConnectionManager.sendUseDatabase(database);
                 ConnectionManager.sendInsert(table, entry);
 
